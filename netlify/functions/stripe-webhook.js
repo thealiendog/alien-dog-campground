@@ -1,6 +1,8 @@
 const Stripe = require("stripe");
 
-const HOSPITABLE_PROPERTY_ID = "2301785";
+const HOSPITABLE_BASE = "https://public.api.hospitable.com";
+const PROPERTY_ID = "c947e17d-8779-41bc-a0ff-b15487fcae8f";
+const FORMSPREE_URL = "https://formspree.io/f/mjgaepaq";
 
 exports.handler = async function (event) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -28,7 +30,6 @@ exports.handler = async function (event) {
     return { statusCode: 400, body: `Webhook Error: ${err.message}` };
   }
 
-  /* Only handle checkout.session.completed */
   if (stripeEvent.type !== "checkout.session.completed") {
     console.log("Ignoring event type:", stripeEvent.type);
     return { statusCode: 200, body: "Event ignored" };
@@ -39,80 +40,109 @@ exports.handler = async function (event) {
   const checkIn = meta.check_in;
   const checkOut = meta.check_out;
   const pets = meta.pets || "0";
-  const nightlyTotal = meta.nightly_total;
-  const cleaningFee = meta.cleaning_fee;
-  const petFee = meta.pet_fee || "0";
-  const tot = meta.tot || "0";
+  const guestName = session.customer_details?.name || "Direct Booking Guest";
+  const guestEmail = session.customer_details?.email || "";
+  const guestPhone = session.customer_details?.phone || "";
+  const amountPaid = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
 
   console.log("Payment completed:", {
     sessionId: session.id,
-    customerEmail: session.customer_details?.email,
-    amountTotal: session.amount_total,
+    guestName,
+    guestEmail,
+    guestPhone,
+    amountPaid,
     checkIn,
     checkOut,
     pets,
-    nightlyTotal,
-    cleaningFee,
-    petFee,
-    tot,
   });
 
   if (!checkIn || !checkOut) {
     console.error("Missing check_in or check_out in session metadata");
-    return { statusCode: 200, body: "No dates in metadata — skipping reservation" };
+    return { statusCode: 200, body: "No dates in metadata — skipping" };
   }
 
-  /* Create reservation in Hospitable */
+  /* Build array of dates to block (check-in through day before check-out) */
+  const dates = [];
+  const note = `Direct booking - ${guestName} - ${guestEmail} - Pets: ${pets} - Stripe: ${session.id}`;
+  const start = new Date(checkIn + "T12:00:00Z");
+  const end = new Date(checkOut + "T12:00:00Z");
+  for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(d.getUTCDate()).padStart(2, "0");
+    dates.push({ date: `${yyyy}-${mm}-${dd}`, available: false, note });
+  }
+
+  console.log(`Blocking ${dates.length} dates in Hospitable:`, dates.map(d => d.date).join(", "));
+
+  /* Block dates in Hospitable calendar */
+  let calendarSuccess = false;
   try {
-    const reservationBody = {
-      property_id: HOSPITABLE_PROPERTY_ID,
-      check_in: checkIn,
-      check_out: checkOut,
-      source: "direct",
-      guest_name: session.customer_details?.name || "Direct Booking Guest",
-      guest_email: session.customer_details?.email || "",
-      guest_phone: session.customer_details?.phone || "",
-      number_of_guests: 1,
-      total_price: session.amount_total / 100,
-      currency: "usd",
-      notes: `Direct booking via Stripe. Pets: ${pets}. Session: ${session.id}`,
-    };
-
-    console.log("Creating Hospitable reservation:", JSON.stringify(reservationBody));
-
-    const hospRes = await fetch(
-      "https://api.hospitable.com/v1/reservations",
+    const calRes = await fetch(
+      `${HOSPITABLE_BASE}/v2/properties/${PROPERTY_ID}/calendar`,
       {
-        method: "POST",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${hospitableToken}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(reservationBody),
+        body: JSON.stringify({ dates }),
       }
     );
-
-    const hospText = await hospRes.text();
-    console.log("Hospitable response:", hospRes.status, hospText);
-
-    if (!hospRes.ok) {
-      console.error("Hospitable reservation failed:", hospRes.status, hospText);
-      /* Return 200 to Stripe anyway — we don't want retries flooding a broken endpoint.
-         The log will show the failure for manual follow-up. */
-      return {
-        statusCode: 200,
-        body: "Payment processed, reservation creation failed — see logs",
-      };
+    const calBody = await calRes.text();
+    console.log("Hospitable calendar response:", calRes.status, calBody);
+    calendarSuccess = calRes.ok;
+    if (!calRes.ok) {
+      console.error("Hospitable calendar block failed:", calRes.status, calBody);
     }
-
-    console.log("Reservation created successfully");
-    return { statusCode: 200, body: "Reservation created" };
   } catch (err) {
-    console.error("Error creating Hospitable reservation:", err.message);
-    return {
-      statusCode: 200,
-      body: "Payment processed, reservation error — see logs",
-    };
+    console.error("Hospitable calendar request error:", err.message);
   }
+
+  /* Send notification via Formspree */
+  let formspreeSuccess = false;
+  try {
+    const formData = {
+      _subject: `New Direct Booking - ${guestName} - ${checkIn} to ${checkOut}`,
+      name: guestName,
+      email: guestEmail,
+      phone: guestPhone || "Not provided",
+      check_in: checkIn,
+      check_out: checkOut,
+      pets: pets,
+      total_paid: `$${amountPaid}`,
+      stripe_session: session.id,
+      calendar_blocked: calendarSuccess ? "Yes" : "FAILED — block dates manually",
+      message:
+        "New direct booking — add guest reservation manually in Hospitable to trigger automated messaging." +
+        (calendarSuccess ? "" : " WARNING: Calendar dates were NOT blocked automatically — do this manually ASAP."),
+    };
+
+    console.log("Sending Formspree notification:", JSON.stringify(formData));
+
+    const formRes = await fetch(FORMSPREE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+    const formBody = await formRes.text();
+    console.log("Formspree response:", formRes.status, formBody);
+    formspreeSuccess = formRes.ok;
+    if (!formRes.ok) {
+      console.error("Formspree notification failed:", formRes.status, formBody);
+    }
+  } catch (err) {
+    console.error("Formspree request error:", err.message);
+  }
+
+  console.log("Webhook complete:", {
+    calendarBlocked: calendarSuccess,
+    notificationSent: formspreeSuccess,
+  });
+
+  return { statusCode: 200, body: "Processed" };
 };
