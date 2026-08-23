@@ -593,12 +593,15 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
               <!-- Calendar grid -->
               <div id="panel-cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(57,255,20,0.03);min-height:200px;"></div>
               <!-- Legend -->
-              <div style="padding:12px 20px;border-top:1px solid rgba(57,255,20,0.08);display:flex;gap:16px;justify-content:center;">
+              <div style="padding:12px 20px;border-top:1px solid rgba(57,255,20,0.08);display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
                 <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(57,255,20,0.2);border:1px solid var(--neon);border-radius:2px;display:inline-block;"></span>Available</span>
                 <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(255,80,80,0.2);border:1px solid rgba(255,80,80,0.6);border-radius:2px;display:inline-block;"></span>Booked</span>
+                <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(199,125,255,0.3);border:1px solid var(--pbright);border-radius:2px;display:inline-block;"></span>Selected</span>
               </div>
             </div>
             <div id="panel-cal-status" style="font-size:11px;color:var(--tdim);margin-top:10px;font-style:italic;text-align:center;"></div>
+            <!-- Booking Summary -->
+            <div id="panel-booking-summary" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:20px;"></div>
           </div>
 
           <!-- What's Included -->
@@ -1163,6 +1166,16 @@ function toggleBookingPanel(id){
 
 /* === PANEL 1 LIVE CALENDAR === */
 var _pcYear,_pcMonth,_pcEvents=[];
+var _pcCheckin=null,_pcCheckout=null;
+var _pcPriceData=null;
+
+function _fmtDate(d){
+  var y=d.getFullYear();
+  var m=d.getMonth()+1;
+  var day=d.getDate();
+  return y+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day;
+}
+
 function loadPanelCalendar(){
   var status=document.getElementById('panel-cal-status');
   if(status)status.textContent='Loading availability...';
@@ -1173,7 +1186,7 @@ function loadPanelCalendar(){
     .then(function(r){return r.json();})
     .then(function(data){
       _pcEvents=data.events||[];
-      if(status)status.textContent='';
+      if(status)status.textContent='Select your check-in date';
       renderPanelCal();
     })
     .catch(function(){
@@ -1197,6 +1210,187 @@ function isDateBooked(y,m,d){
   return false;
 }
 
+function _nextBookedAfter(checkinDate){
+  var ciStr=_fmtDate(checkinDate);
+  var earliest=null;
+  for(var i=0;i<_pcEvents.length;i++){
+    var s=_pcEvents[i].start;
+    if(s>ciStr&&(!earliest||s<earliest))earliest=s;
+  }
+  return earliest;
+}
+
+function _panelCalClick(y,m,d){
+  var clicked=new Date(y,m,d);
+  var status=document.getElementById('panel-cal-status');
+
+  if(!_pcCheckin||_pcCheckout){
+    /* Selecting check-in (or resetting) */
+    if(isDateBooked(y,m,d))return;
+    _pcCheckin=clicked;
+    _pcCheckout=null;
+    _pcPriceData=null;
+    _hideSummary();
+    if(status)status.textContent='Now select your check-out date';
+  }else{
+    /* Selecting check-out */
+    if(clicked<=_pcCheckin)return;
+    /* Check no booked date between checkin and clicked */
+    var limit=_nextBookedAfter(_pcCheckin);
+    var clickedStr=_fmtDate(clicked);
+    if(limit&&clickedStr>limit)return;
+    _pcCheckout=clicked;
+    if(status)status.textContent='Fetching prices...';
+    _fetchPrices();
+  }
+  renderPanelCal();
+}
+
+function _fetchPrices(){
+  var ciStr=_fmtDate(_pcCheckin);
+  var coStr=_fmtDate(_pcCheckout);
+  fetch('/.netlify/functions/get-price?date_from='+ciStr+'&date_to='+coStr)
+    .then(function(r){return r.json();})
+    .then(function(data){
+      _pcPriceData=data;
+      _showSummary();
+    })
+    .catch(function(){
+      var status=document.getElementById('panel-cal-status');
+      if(status)status.textContent='Could not fetch pricing — try again or book on Airbnb.';
+    });
+}
+
+function _showSummary(){
+  var summary=document.getElementById('panel-booking-summary');
+  var status=document.getElementById('panel-cal-status');
+  if(!summary)return;
+
+  var nights=Math.round((_pcCheckout-_pcCheckin)/(1000*60*60*24));
+  var ciStr=_fmtDate(_pcCheckin);
+  var coStr=_fmtDate(_pcCheckout);
+
+  /* Parse prices from PriceLabs response */
+  var prices=null;
+  if(_pcPriceData){
+    /* PriceLabs returns array of listing results */
+    if(Array.isArray(_pcPriceData)&&_pcPriceData.length>0){
+      prices=_pcPriceData[0].prices||_pcPriceData[0].data;
+    }else if(_pcPriceData.prices){
+      prices=_pcPriceData.prices;
+    }else if(_pcPriceData.data&&Array.isArray(_pcPriceData.data)){
+      if(_pcPriceData.data.length>0&&_pcPriceData.data[0].prices){
+        prices=_pcPriceData.data[0].prices;
+      }else{prices=_pcPriceData.data;}
+    }
+  }
+
+  if(!prices||!Array.isArray(prices)||prices.length===0){
+    if(status)status.textContent='Pricing unavailable for these dates — book on Airbnb.';
+    summary.style.display='none';
+    _recalcPanel();
+    return;
+  }
+
+  /* Check min_stay on check-in date */
+  var checkinPrice=null;
+  for(var i=0;i<prices.length;i++){
+    if(prices[i].date===ciStr){checkinPrice=prices[i];break;}
+  }
+  var minStay=checkinPrice&&checkinPrice.min_stay?checkinPrice.min_stay:1;
+
+  if(nights<minStay){
+    if(status)status.textContent='';
+    summary.style.display='block';
+    summary.innerHTML=
+      '<div style="text-align:center;">'+
+      '<div style="font-family:Orbitron,monospace;font-size:11px;letter-spacing:2px;color:var(--pbright);margin-bottom:10px;">MINIMUM STAY REQUIRED</div>'+
+      '<p style="font-size:14px;color:var(--tdim);line-height:1.7;">These dates require a minimum stay of <strong style="color:var(--neon);">'+minStay+' night'+(minStay>1?'s':'')+'</strong>. You selected '+nights+' night'+(nights>1?'s':'')+'. Please choose a later check-out date.</p>'+
+      '</div>';
+    _recalcPanel();
+    return;
+  }
+
+  /* Sum user_price for nights (exclude checkout date) */
+  var total=0;
+  var nightPrices=[];
+  for(var i=0;i<prices.length;i++){
+    var p=prices[i];
+    if(p.date>=ciStr&&p.date<coStr){
+      var up=p.user_price!==undefined?p.user_price:p.price;
+      total+=up;
+      nightPrices.push({date:p.date,price:up});
+    }
+  }
+
+  var avg=nights>0?Math.round(total/nights):0;
+
+  /* Format dates for display */
+  var ciDisp=_pcCheckin.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var coDisp=_pcCheckout.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  var html=
+    '<div style="text-align:center;">'+
+    '<div style="font-family:Orbitron,monospace;font-size:11px;letter-spacing:2px;color:var(--neon);margin-bottom:14px;">YOUR STAY</div>'+
+    '<div style="display:flex;justify-content:center;gap:24px;margin-bottom:18px;flex-wrap:wrap;">'+
+      '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">CHECK-IN</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+ciDisp+'</div></div>'+
+      '<div style="color:var(--neon);font-size:18px;align-self:flex-end;">→</div>'+
+      '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">CHECK-OUT</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+coDisp+'</div></div>'+
+      '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">NIGHTS</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+nights+'</div></div>'+
+    '</div>'+
+    '<div style="border-top:1px solid rgba(57,255,20,0.1);padding-top:14px;margin-bottom:14px;">';
+
+  /* Nightly breakdown */
+  if(nightPrices.length<=7){
+    for(var i=0;i<nightPrices.length;i++){
+      var nd=new Date(nightPrices[i].date+'T12:00:00');
+      var ndDisp=nd.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+      html+='<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:var(--tdim);">'+
+        '<span>'+ndDisp+'</span><span style="color:var(--neon);">$'+nightPrices[i].price+'</span></div>';
+    }
+  }else{
+    html+='<div style="font-size:12px;color:var(--tdim);margin-bottom:4px;">'+nights+' nights × $'+avg+'/night avg</div>';
+  }
+
+  html+='</div>'+
+    '<div style="border-top:1px solid rgba(57,255,20,0.15);padding-top:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">'+
+      '<span style="font-family:Orbitron,monospace;font-size:12px;letter-spacing:2px;color:var(--tdim);">TOTAL</span>'+
+      '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+total+'</span>'+
+    '</div>'+
+    '<div style="display:flex;flex-direction:column;gap:10px;">'+
+      '<div style="display:block;text-align:center;background:rgba(57,255,20,0.15);color:rgba(57,255,20,0.4);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;border:1px solid rgba(57,255,20,0.2);cursor:default;">CONTINUE TO PAYMENT</div>'+
+      '<a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener" style="display:block;text-align:center;border:1px solid var(--neon);color:var(--neon);padding:12px 32px;font-family:Orbitron,monospace;font-size:11px;font-weight:700;letter-spacing:2px;text-decoration:none;border-radius:2px;transition:all 0.3s;">Or Book on Airbnb ↗</a>'+
+    '</div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Direct payment coming soon. Prices shown are estimates and may vary.</div>'+
+    '<div style="margin-top:8px;"><span onclick="_resetSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
+    '</div>';
+
+  if(status)status.textContent='';
+  summary.style.display='block';
+  summary.innerHTML=html;
+  _recalcPanel();
+}
+
+function _hideSummary(){
+  var s=document.getElementById('panel-booking-summary');
+  if(s){s.style.display='none';s.innerHTML='';}
+}
+
+function _resetSelection(){
+  _pcCheckin=null;_pcCheckout=null;_pcPriceData=null;
+  _hideSummary();
+  var status=document.getElementById('panel-cal-status');
+  if(status)status.textContent='Select your check-in date';
+  renderPanelCal();
+}
+
+function _recalcPanel(){
+  var panel=document.getElementById('panel-house');
+  if(panel&&panel.style.maxHeight!=='0px'){
+    panel.style.maxHeight=panel.scrollHeight+'px';
+  }
+}
+
 function renderPanelCal(){
   var months=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
   var label=document.getElementById('panel-cal-month');
@@ -1208,6 +1402,11 @@ function renderPanelCal(){
   var days=new Date(_pcYear,_pcMonth+1,0).getDate();
   var today=new Date();
   today.setHours(0,0,0,0);
+
+  var ciStr=_pcCheckin?_fmtDate(_pcCheckin):null;
+  var coStr=_pcCheckout?_fmtDate(_pcCheckout):null;
+  var limitStr=(_pcCheckin&&!_pcCheckout)?_nextBookedAfter(_pcCheckin):null;
+
   for(var i=0;i<first;i++){
     var blank=document.createElement('div');
     blank.style.cssText='padding:10px;background:rgba(3,0,15,0.3);';
@@ -1216,25 +1415,59 @@ function renderPanelCal(){
   for(var d=1;d<=days;d++){
     var cell=document.createElement('div');
     var cellDate=new Date(_pcYear,_pcMonth,d);
+    var cellStr=_fmtDate(cellDate);
     var isPast=cellDate<today;
     var booked=isDateBooked(_pcYear,_pcMonth,d);
-    var bg,border,color;
-    if(isPast){
+    var isCheckin=ciStr&&cellStr===ciStr;
+    var isCheckout=coStr&&cellStr===coStr;
+    var isInRange=ciStr&&coStr&&cellStr>ciStr&&cellStr<coStr;
+    var bg,border,color,cursor='default';
+
+    if(isCheckin){
+      bg='rgba(199,125,255,0.35)';border='var(--pbright)';color='#fff';
+    }else if(isCheckout){
+      bg='rgba(199,125,255,0.25)';border='var(--pbright)';color='#fff';
+    }else if(isInRange){
+      bg='rgba(199,125,255,0.12)';border='rgba(199,125,255,0.3)';color='var(--pbright)';
+    }else if(isPast){
       bg='rgba(255,255,255,0.02)';border='transparent';color='rgba(255,255,255,0.15)';
     }else if(booked){
       bg='rgba(255,80,80,0.12)';border='rgba(255,80,80,0.4)';color='rgba(255,80,80,0.7)';
     }else{
       bg='rgba(57,255,20,0.08)';border='rgba(57,255,20,0.3)';color='var(--neon)';
+      cursor='pointer';
     }
-    cell.style.cssText='padding:10px;text-align:center;font-family:Orbitron,monospace;font-size:12px;background:'+bg+';border:1px solid '+border+';color:'+color+';';
+
+    /* If selecting checkout, available dates past a booked date are not clickable */
+    var clickable=false;
+    if(!isPast&&!booked){
+      if(!_pcCheckin||_pcCheckout){
+        clickable=true; /* Can select as check-in */
+      }else{
+        /* Selecting checkout: must be after checkin and before next booked */
+        if(cellDate>_pcCheckin&&(!limitStr||cellStr<=limitStr)){
+          clickable=true;
+        }
+      }
+    }
+
+    if(clickable)cursor='pointer';
+
+    cell.style.cssText='padding:10px;text-align:center;font-family:Orbitron,monospace;font-size:12px;background:'+bg+';border:1px solid '+border+';color:'+color+';cursor:'+cursor+';transition:background 0.2s;';
     cell.textContent=d;
+
+    if(clickable){
+      (function(yy,mm,dd){
+        cell.onmouseover=function(){if(!this._selected)this.style.background='rgba(199,125,255,0.15)';};
+        cell.onmouseout=function(){if(!this._selected)this.style.background=bg;};
+        cell.onclick=function(){_panelCalClick(yy,mm,dd);};
+      })(_pcYear,_pcMonth,d);
+    }
+
+    if(isCheckin||isCheckout)cell._selected=true;
     grid.appendChild(cell);
   }
-  /* Recalculate panel max-height since content changed */
-  var panel=document.getElementById('panel-house');
-  if(panel&&panel.style.maxHeight!=='0px'){
-    panel.style.maxHeight=panel.scrollHeight+'px';
-  }
+  _recalcPanel();
 }
 </script>
 
