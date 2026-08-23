@@ -89,17 +89,6 @@ nav ul li a:hover{color:var(--neon);}
 .quote-text{font-size:20px;line-height:1.75;color:var(--text);font-style:italic;font-weight:300;}
 .quote-text strong{color:var(--neon);font-style:normal;}
 .quote-attr{margin-top:22px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--pbright);}
-#vip{background:linear-gradient(135deg,var(--bg2) 0%,rgba(57,255,20,0.04) 50%,var(--bg2) 100%);text-align:center;border-top:1px solid rgba(57,255,20,0.12);border-bottom:1px solid rgba(57,255,20,0.12);}
-.vip-badge{display:inline-block;background:var(--neon);color:var(--bg);font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;padding:7px 18px;margin-bottom:26px;font-weight:700;}
-.vip-perks{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin:26px 0 36px;}
-.vip-perk{font-size:13px;color:var(--tdim);display:flex;align-items:center;gap:7px;}
-.vip-perk::before{content:'';}
-.vip-form{display:flex;max-width:480px;margin:0 auto;} .vip-form.hidden{display:none!important;}
-.vip-form input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.4);border-right:none;padding:15px 18px;color:#fff;font-family:'Exo 2',sans-serif;font-size:15px;outline:none;}
-.vip-form input:focus{border-color:var(--neon);}
-.vip-form button{background:var(--neon);border:none;padding:15px 26px;color:var(--bg);font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.3s;}
-.vip-form button:hover{background:#fff;}
-.vip-note{font-size:12px;color:var(--tdim);margin-top:14px;font-style:italic;}
 .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:start;max-width:1100px;margin:0 auto;}
 .loc-items{display:flex;flex-direction:column;gap:14px;margin-top:36px;}
 .loc-item{display:flex;gap:14px;padding:18px;background:var(--card);border:1px solid rgba(57,255,20,0.1);border-left:3px solid var(--neon);transition:all 0.3s;}
@@ -111,6 +100,7 @@ nav ul li a:hover{color:var(--neon);}
 .map-box iframe{width:100%;height:100%;border:none;filter:invert(90%) hue-rotate(180deg) brightness(0.65) saturate(1.5);}
 #instagram{text-align:center;background:var(--bg2);padding:90px 40px;position:relative;z-index:1;}
 
+.ig-cell { height: 220px; }
 .ig-cell:hover img { transform: scale(1.05); }
 .ig-cell:hover .ig-caption { opacity: 1 !important; }
 .ig-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; margin:46px auto 36px; max-width:960px; }
@@ -133,7 +123,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 .footer-socials a{font-size:11px;font-family:'Orbitron',monospace;color:var(--tdim);text-decoration:none;letter-spacing:2px;transition:color 0.3s;}
 .footer-socials a:hover{color:var(--neon);}
 @media(max-width:900px){nav ul{display:flex;gap:12px;}.amen-grid,.dogs-grid{grid-template-columns:repeat(2,1fr);}.exp-grid,.story-grid,.loc-grid{grid-template-columns:1fr;gap:40px;}.footer-grid{grid-template-columns:1fr 1fr;}.ig-grid{grid-template-columns:repeat(3,1fr);}.booking-cards{grid-template-columns:1fr!important;}#panel-house>div{padding:0 24px 24px!important;}#panel-house [style*="grid-template-columns:repeat(3"]{grid-template-columns:repeat(2,1fr)!important;}#panel-house [style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important;gap:30px!important;}}
-@media(max-width:580px){.sec{padding:60px 20px;}nav{padding:12px 20px;}.hero-btns{flex-direction:column;align-items:center;}.dogs-grid,.amen-grid,.footer-grid{grid-template-columns:1fr;}.vip-form{flex-direction:column;}.vip-form input{border-right:1px solid rgba(57,255,20,0.4);border-bottom:none;}#panel-house>div{padding:0 16px 20px!important;}#panel-house [style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr 1fr!important;}}
+@media(max-width:580px){.sec{padding:60px 20px;}nav{padding:12px 20px;}.hero-btns{flex-direction:column;align-items:center;}.dogs-grid,.amen-grid,.footer-grid{grid-template-columns:1fr;}#panel-house>div{padding:0 16px 20px!important;}#panel-house [style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr 1fr!important;}}
 
 
 
@@ -273,7 +263,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
     <li><a href="#story">Our Story</a></li>
     <li><a href="#location">Location</a></li>
     <li><a href="#instagram">Gallery</a></li>
-    <li><a href="#vip" class="nav-book">Join VIP List</a></li>
+    <li><a href="#book" class="nav-book">Book Now</a></li>
   </ul>
   <label for="nav-toggle" id="nav-toggle-label">
     <span></span>
@@ -289,7 +279,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
   <a href="#story" onclick="document.getElementById('nav-toggle').checked=false;">OUR STORY</a>
   <a href="#location" onclick="document.getElementById('nav-toggle').checked=false;">LOCATION</a>
   <a href="#instagram" onclick="document.getElementById('nav-toggle').checked=false;">GALLERY</a>
-  <a href="#vip" onclick="document.getElementById('nav-toggle').checked=false;">JOIN VIP LIST 🛸</a>
+  <a href="#book" onclick="document.getElementById('nav-toggle').checked=false;">BOOK NOW 🛸</a>
 </div>
 </div>
 
@@ -306,7 +296,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
   <p class="hero-loc"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Joshua Tree, CA · 15 min from Joshua Tree National Park</p>
 </section>
 
-<div class="band"><p>🛸 OPENING SOON &nbsp;·&nbsp; DIRECT BOOKING · GROUP STAYS · PRIVATE EVENTS &nbsp;·&nbsp; JOIN VIP LIST FOR FIRST ACCESS <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></p></div>
+<div class="band"><p>🛸 NOW OPEN &nbsp;·&nbsp; DIRECT BOOKING · GROUP STAYS · PRIVATE EVENTS &nbsp;·&nbsp; JOSHUA TREE, CALIFORNIA <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg></p></div>
 
 <section id="amenities" class="sec" style="background:var(--bg);">
   <div style="max-width:1200px;margin:0 auto;">
@@ -798,26 +788,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
   </div>
 </section>
 
-<section id="vip" class="sec">
-  <div style="max-width:680px;margin:0 auto;text-align:center;">
-    <div class="vip-badge">🛸 VIP LAUNCH LIST</div>
-    <h2 class="sec-title" style="margin-bottom:14px;">Be First to <em>Enter the Universe</em></h2>
-    <p class="sec-body" style="margin:0 auto 26px;text-align:center;">VIP members get first access to booking, exclusive launch rates, and a special welcome surprise when you arrive.</p>
-    <div class="vip-perks">
-      <div class="vip-perk">First Booking Access</div>
-      <div class="vip-perk">Launch Discount</div>
-      <div class="vip-perk">Exclusive Updates</div>
-      <div class="vip-perk">Welcome Surprise</div>
-    </div>
-    <form action="https://formspree.io/f/xqeydgyk" method="POST" style="display:flex;max-width:480px;margin:20px auto 0;">
-      <input type="email" name="email" placeholder="Enter your email, Earthling..." required
-        style="flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.4);border-right:none;padding:15px 18px;color:#fff;font-family:'Exo 2',sans-serif;font-size:15px;outline:none;">
-      <input type="hidden" name="_subject" value="New VIP Signup - Alien Dog Campground">
-      <button type="submit" style="background:#39ff14;border:none;padding:15px 26px;color:#03000f;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;">JOIN 🛸</button>
-    </form>
-    <p style="font-size:12px;color:#8aad80;margin-top:14px;font-style:italic;">No spam. Just magic. Unsubscribe anytime.</p>
-  </div>
-</section>
+
 
 <section id="location" class="sec" style="background:var(--bg);">
   <div class="loc-grid reveal">
@@ -940,7 +911,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
     </div>
     <div class="footer-col"><h4>Explore</h4><ul><li><a href="#amenities">The Experience</a></li><li><a href="#dogs">The Alien Dogs</a></li><li><a href="#story">Our Story</a></li><li><a href="#location">Location</a></li>
     <li><a href="#instagram">Gallery</a></li></ul></div>
-    <div class="footer-col"><h4>Stay</h4><ul><li><a href="#vip">Join VIP List</a></li><li><a href="#">Book on Airbnb</a></li><li><a href="#">Direct Booking</a></li><li><a href="#">Group Buyouts</a></li></ul></div>
+    <div class="footer-col"><h4>Stay</h4><ul><li><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener">Book on Airbnb</a></li><li><a href="#book">Book Direct</a></li><li><a href="#groups">Group Buyouts</a></li><li><a href="#group-form">Private Events</a></li></ul></div>
     <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://instagram.com/aliendogcampground" target="_blank">Instagram</a></li><li><a href="https://facebook.com/TheAlienDog" target="_blank">Facebook</a></li><li><a href="/cdn-cgi/l/email-protection#036c6d6f6a6d66707673736c717743776b66626f6a666d676c642d606c6e">Email Us</a></li></ul></div>
   </div>
   <div class="footer-bottom">
@@ -1164,33 +1135,6 @@ function closeMenu(){
 
 function closeModal(){
   document.getElementById('coming-soon-modal').classList.remove('show');
-  setTimeout(function(){
-    window.location.href = '#vip';
-  }, 200);
-}
-
-function submitVIP(){
-  var email = document.getElementById('vip-email').value;
-  if(!email || !email.includes('@')){ 
-    alert('Please enter a valid email address');
-    return; 
-  }
-  var btn = document.getElementById('vip-btn');
-  btn.textContent = '...';
-  btn.disabled = true;
-
-  // Show success immediately
-  document.getElementById('vip-form-wrap').style.display = 'none';
-  document.getElementById('vip-success').style.display = 'block';
-
-  // Send to Formspree
-  var data = new FormData();
-  data.append('email', email);
-  data.append('_subject', 'New VIP Signup - Alien Dog Campground');
-  fetch('https://formspree.io/f/xqeydgyk', {
-    method: 'POST', body: data, headers: {'Accept': 'application/json'}
-  }).then(function(r){ console.log('VIP submitted:', r.status); })
-  .catch(function(e){ console.log('VIP error:', e); });
 }
 checkMobile();
 window.addEventListener('resize', checkMobile);
@@ -1297,5 +1241,10 @@ function renderPanelCal(){
   <div class="modal-box">
     <div style="font-size:48px;margin-bottom:16px;">🛸</div>
     <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--neon);letter-spacing:2px;margin-bottom:14px;">COMING SOON!</div>
-    <p style="font-size:15px;color:var(--tdim);line-height:1.8;margin-bottom:28px;">Direct booking is launching soon!<br>Join our VIP list to get <strong style="color:var(--neon);">first access + exclusive launch rates</strong> before we open to the public.</p>
-    <a href="#vip" onclick="document.getElementById('coming-soon-modal').classList.remove('show')" style="display:block;background:var(--neon);padding:14px 32px;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:#03000f;cursor:pointer;border-radius:2px;width:100%;margin-bottom:12px;text-decoration:none;box-sizing:border-box;text-align:center;">JOIN VIP LIST 🛸</
+    <p style="font-size:15px;color:var(--tdim);line-height:1.8;margin-bottom:28px;">Direct booking via Stripe is launching soon.<br>In the meantime, <strong style="color:var(--neon);">book on Airbnb</strong> to reserve your dates.</p>
+    <a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener" style="display:block;background:var(--neon);padding:14px 32px;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:#03000f;cursor:pointer;border-radius:2px;width:100%;margin-bottom:12px;text-decoration:none;box-sizing:border-box;text-align:center;">BOOK ON AIRBNB 🛸</a>
+    <div onclick="document.getElementById('coming-soon-modal').classList.remove('show')" style="font-size:13px;color:var(--tdim);cursor:pointer;padding:8px;">Close</div>
+  </div>
+</div>
+</body>
+</html>
