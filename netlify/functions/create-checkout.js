@@ -2,8 +2,8 @@ const Stripe = require("stripe");
 
 const LISTING_ID = "c947e17d-8779-41bc-a0ff-b15487fcae8f";
 const PMS = "smartbnb";
-const CLEANING_FEE = 150;
-const PET_FEE_PER = 150;
+const CLEANING_FEE = 200;
+const PET_FEE_PER = 100;
 const MAX_PETS = 2;
 const TOT_RATE = 0.07;
 

@@ -1046,9 +1046,9 @@ function _showSummary(){
 
   _showPetSelector(true);
 
-  var cleaningFee=150;
+  var cleaningFee=200;
   var petCount=_getPetCount();
-  var petFee=petCount*150;
+  var petFee=petCount*100;
   var taxableBase=nightlyTotal+cleaningFee+petFee;
   var tot=Math.round(taxableBase*0.07*100)/100;
   var grandTotal=Math.round((taxableBase+tot)*100)/100;
@@ -1077,7 +1077,7 @@ function _showSummary(){
       _r('Cleaning fee',cleaningFee);
 
   if(petCount>0){
-    html+=_r('Pet fee ('+petCount+' pet'+(petCount>1?'s':'')+' \u00d7 $150)',petFee);
+    html+=_r('Pet fee ('+petCount+' pet'+(petCount>1?'s':'')+' \u00d7 $100)',petFee);
   }
 
   html+=_r('Transient Occupancy Tax (7%)',tot.toFixed(2))+
@@ -1362,7 +1362,7 @@ function renderPanelCal(){
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
               <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);cursor:pointer;display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="pet-toggle" onchange="_onPetChange()" style="accent-color:#39ff14;width:16px;height:16px;cursor:pointer;">
-                BRINGING PETS? (+$150/pet)
+                BRINGING PETS? (+$100/pet)
               </label>
               <div id="pet-count-wrap" style="display:none;align-items:center;gap:8px;">
                 <span style="font-size:12px;color:var(--tdim);">How many:</span>
