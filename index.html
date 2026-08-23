@@ -946,9 +946,9 @@ function _panelCalClick(y,m,d){
     _hideSummary();
     if(status)status.textContent='Now select your check-out date';
   }else{
-    /* Selecting check-out */
+    /* Selecting check-out — must be after checkin */
     if(clicked<=_pcCheckin)return;
-    /* Check no booked date between checkin and clicked */
+    /* Checkout can land ON a booked date's start (guest leaves that morning) */
     var limit=_nextBookedAfter(_pcCheckin);
     var clickedStr=_fmtDate(clicked);
     if(limit&&clickedStr>limit)return;
@@ -1025,18 +1025,28 @@ function _showSummary(){
   }
 
   /* Sum user_price for nights (exclude checkout date) */
-  var total=0;
-  var nightPrices=[];
+  var nightlyTotal=0;
+  var matchedNights=0;
   for(var i=0;i<prices.length;i++){
     var p=prices[i];
     if(p.date>=ciStr&&p.date<coStr){
       var up=p.user_price!==undefined?p.user_price:p.price;
-      total+=up;
-      nightPrices.push({date:p.date,price:up});
+      nightlyTotal+=up;
+      matchedNights++;
     }
   }
 
-  var avg=nights>0?Math.round(total/nights):0;
+  /* If we got no price data for these nights, show a clear message */
+  if(matchedNights===0){
+    if(status)status.textContent='Pricing unavailable for these dates. Please try different dates.';
+    summary.style.display='none';
+    _recalcPanel();
+    return;
+  }
+
+  var cleaningFee=150;
+  var grandTotal=nightlyTotal+cleaningFee;
+  var avg=nights>0?Math.round(nightlyTotal/nights):0;
 
   /* Format dates for display */
   var ciDisp=_pcCheckin.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
@@ -1047,32 +1057,22 @@ function _showSummary(){
     '<div style="font-family:Orbitron,monospace;font-size:11px;letter-spacing:2px;color:var(--neon);margin-bottom:14px;">YOUR STAY</div>'+
     '<div style="display:flex;justify-content:center;gap:24px;margin-bottom:18px;flex-wrap:wrap;">'+
       '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">CHECK-IN</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+ciDisp+'</div></div>'+
-      '<div style="color:var(--neon);font-size:18px;align-self:flex-end;">→</div>'+
+      '<div style="color:var(--neon);font-size:18px;align-self:flex-end;">\u2192</div>'+
       '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">CHECK-OUT</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+coDisp+'</div></div>'+
       '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">NIGHTS</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+nights+'</div></div>'+
     '</div>'+
-    '<div style="border-top:1px solid rgba(57,255,20,0.1);padding-top:14px;margin-bottom:14px;">';
-
-  /* Nightly breakdown */
-  if(nightPrices.length<=7){
-    for(var i=0;i<nightPrices.length;i++){
-      var nd=new Date(nightPrices[i].date+'T12:00:00');
-      var ndDisp=nd.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-      html+='<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;color:var(--tdim);">'+
-        '<span>'+ndDisp+'</span><span style="color:var(--neon);">$'+nightPrices[i].price+'</span></div>';
-    }
-  }else{
-    html+='<div style="font-size:12px;color:var(--tdim);margin-bottom:4px;">'+nights+' nights × $'+avg+'/night avg</div>';
-  }
-
-  html+='</div>'+
+    '<div style="border-top:1px solid rgba(57,255,20,0.1);padding-top:14px;margin-bottom:14px;">'+
+      '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
+        '<span>'+nights+' night'+(nights>1?'s':'')+' \u00d7 $'+avg+'/night</span><span style="color:var(--neon);">$'+nightlyTotal+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
+        '<span>Cleaning fee</span><span style="color:var(--neon);">$'+cleaningFee+'</span></div>'+
+    '</div>'+
     '<div style="border-top:1px solid rgba(57,255,20,0.15);padding-top:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">'+
       '<span style="font-family:Orbitron,monospace;font-size:12px;letter-spacing:2px;color:var(--tdim);">TOTAL</span>'+
-      '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+total+'</span>'+
+      '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal+'</span>'+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:10px;">'+
       '<div style="display:block;text-align:center;background:rgba(57,255,20,0.15);color:rgba(57,255,20,0.4);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;border:1px solid rgba(57,255,20,0.2);cursor:default;">CONTINUE TO PAYMENT</div>'+
-      
     '</div>'+
     '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Direct payment coming soon. Prices shown are estimates and may vary.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
@@ -1148,13 +1148,15 @@ function renderPanelCal(){
       cursor='pointer';
     }
 
-    /* If selecting checkout, available dates past a booked date are not clickable */
+    /* Determine if this cell is clickable */
     var clickable=false;
-    if(!isPast&&!booked){
+    if(!isPast){
       if(!_pcCheckin||_pcCheckout){
-        clickable=true; /* Can select as check-in */
+        /* Selecting check-in: any available (non-booked, non-past) date */
+        if(!booked)clickable=true;
       }else{
-        /* Selecting checkout: must be after checkin and before next booked */
+        /* Selecting checkout: after checkin, up to (and including) the next booked start date.
+           Checkout ON a booked date is valid — guest leaves that morning. */
         if(cellDate>_pcCheckin&&(!limitStr||cellStr<=limitStr)){
           clickable=true;
         }
