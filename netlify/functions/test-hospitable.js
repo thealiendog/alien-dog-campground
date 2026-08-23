@@ -16,23 +16,30 @@ exports.handler = async function () {
   };
 
   const BASE = "https://public.api.hospitable.com";
+  const SP_ID = "e6d66975-3dd6-47a8-afb9-20846be79f15";
 
-  /* Test 1: GET /v2/properties — confirm auth, get property/listing IDs */
+  /* Test 1: GET /v2/properties — FULL response to find Alien Dog property ID */
   try {
     const r1 = await fetch(`${BASE}/v2/properties`, { headers });
-    const text1 = await r1.text();
-    results.v2_properties = { status: r1.status, body: text1.substring(0, 2000) };
+    results.v2_properties_full = { status: r1.status, body: await r1.text() };
   } catch (e) {
-    results.v2_properties = { error: e.message };
+    results.v2_properties_full = { error: e.message };
   }
 
-  /* Test 2: GET /v2/reservations — confirm endpoint exists */
+  /* Test 2: GET /v2/reservations with properties filter — see reservation data structure */
   try {
-    const r2 = await fetch(`${BASE}/v2/reservations`, { headers });
-    const text2 = await r2.text();
-    results.v2_reservations = { status: r2.status, body: text2.substring(0, 2000) };
+    const r2 = await fetch(`${BASE}/v2/reservations?properties[]=${SP_ID}`, { headers });
+    results.v2_reservations_filtered = { status: r2.status, body: await r2.text() };
   } catch (e) {
-    results.v2_reservations = { error: e.message };
+    results.v2_reservations_filtered = { error: e.message };
+  }
+
+  /* Test 3: GET /v2/properties/{id}/calendar — check if calendar endpoint exists */
+  try {
+    const r3 = await fetch(`${BASE}/v2/properties/${SP_ID}/calendar?start_date=2027-01-01&end_date=2027-01-05`, { headers });
+    results.v2_calendar = { status: r3.status, body: await r3.text() };
+  } catch (e) {
+    results.v2_calendar = { error: e.message };
   }
 
   return {
