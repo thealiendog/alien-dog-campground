@@ -1072,9 +1072,9 @@ function _showSummary(){
       '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal+'</span>'+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:10px;">'+
-      '<div style="display:block;text-align:center;background:rgba(57,255,20,0.15);color:rgba(57,255,20,0.4);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;border:1px solid rgba(57,255,20,0.2);cursor:default;">CONTINUE TO PAYMENT</div>'+
+      '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">CONTINUE TO PAYMENT \u2192</div>'+
     '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Direct payment coming soon. Prices shown are estimates and may vary.</div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe. Prices shown are estimates and may vary.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
     '</div>';
 
@@ -1087,6 +1087,44 @@ function _showSummary(){
 function _hideSummary(){
   var s=document.getElementById('panel-booking-summary');
   if(s){s.style.display='none';s.innerHTML='';}
+}
+
+function _startCheckout(){
+  if(!_pcCheckin||!_pcCheckout)return;
+  var btn=document.getElementById('pay-btn');
+  if(!btn)return;
+  btn.textContent='PROCESSING...';
+  btn.style.opacity='0.5';
+  btn.style.cursor='default';
+  btn.onclick=null;
+  var ciStr=_fmtDate(_pcCheckin);
+  var coStr=_fmtDate(_pcCheckout);
+  fetch('/.netlify/functions/create-checkout',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({check_in:ciStr,check_out:coStr})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.url){
+      window.location.href=data.url;
+    }else{
+      btn.textContent='ERROR — TRY AGAIN';
+      btn.style.opacity='1';
+      btn.style.cursor='pointer';
+      btn.onclick=_startCheckout;
+      var status=document.getElementById('panel-cal-status');
+      if(status)status.textContent=data.error||'Could not create checkout session.';
+    }
+  })
+  .catch(function(){
+    btn.textContent='ERROR — TRY AGAIN';
+    btn.style.opacity='1';
+    btn.style.cursor='pointer';
+    btn.onclick=_startCheckout;
+    var status=document.getElementById('panel-cal-status');
+    if(status)status.textContent='Network error — please try again.';
+  });
 }
 
 function _resetSelection(){
