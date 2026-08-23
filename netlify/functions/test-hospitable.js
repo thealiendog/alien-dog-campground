@@ -42,6 +42,25 @@ exports.handler = async function () {
     results.v2_calendar = { error: e.message };
   }
 
+  /* Test 4: PUT /v2/properties/{id}/calendar — try blocking a far-future date */
+  const AD_ID = "c947e17d-8779-41bc-a0ff-b15487fcae8f";
+  try {
+    const r4 = await fetch(`${BASE}/v2/properties/${AD_ID}/calendar`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify({
+        dates: [{
+          date: "2027-06-15",
+          available: false,
+          note: "Test block - direct booking",
+        }],
+      }),
+    });
+    results.v2_calendar_put = { status: r4.status, body: await r4.text() };
+  } catch (e) {
+    results.v2_calendar_put = { error: e.message };
+  }
+
   return {
     statusCode: 200,
     headers: { "Content-Type": "application/json" },
