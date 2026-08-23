@@ -3,6 +3,9 @@ const Stripe = require("stripe");
 const LISTING_ID = "c947e17d-8779-41bc-a0ff-b15487fcae8f";
 const PMS = "smartbnb";
 const CLEANING_FEE = 150;
+const PET_FEE_PER = 150;
+const MAX_PETS = 2;
+const TOT_RATE = 0.07;
 
 async function fetchPrices(dateFrom, dateTo) {
   const apiKey = process.env.PRICELABS_API_KEY;
@@ -40,6 +43,7 @@ exports.handler = async function (event) {
 
     const body = JSON.parse(event.body || "{}");
     const { check_in, check_out } = body;
+    const pets = Math.min(Math.max(parseInt(body.pets, 10) || 0, 0), MAX_PETS);
 
     if (!check_in || !check_out) {
       return {
@@ -85,7 +89,10 @@ exports.handler = async function (event) {
       };
     }
 
-    const grandTotal = nightlyTotal + CLEANING_FEE;
+    const petFee = pets * PET_FEE_PER;
+    const taxableBase = nightlyTotal + CLEANING_FEE + petFee;
+    const tot = Math.round(taxableBase * TOT_RATE * 100) / 100;
+    const grandTotal = Math.round((taxableBase + tot) * 100) / 100;
     const amountCents = Math.round(grandTotal * 100);
 
     const stripe = new Stripe(stripeKey);
@@ -109,6 +116,9 @@ exports.handler = async function (event) {
         nights: String(nightCount),
         nightly_total: String(nightlyTotal),
         cleaning_fee: String(CLEANING_FEE),
+        pet_fee: String(petFee),
+        pets: String(pets),
+        tot: String(tot),
       },
       success_url: "https://aliendogcampground.com/booking-success",
       cancel_url: "https://aliendogcampground.com/",

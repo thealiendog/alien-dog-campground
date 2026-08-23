@@ -1044,13 +1044,24 @@ function _showSummary(){
     return;
   }
 
+  _showPetSelector(true);
+
   var cleaningFee=150;
-  var grandTotal=nightlyTotal+cleaningFee;
+  var petCount=_getPetCount();
+  var petFee=petCount*150;
+  var taxableBase=nightlyTotal+cleaningFee+petFee;
+  var tot=Math.round(taxableBase*0.07*100)/100;
+  var grandTotal=Math.round((taxableBase+tot)*100)/100;
   var avg=nights>0?Math.round(nightlyTotal/nights):0;
 
   /* Format dates for display */
   var ciDisp=_pcCheckin.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var coDisp=_pcCheckout.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  var _r=function(label,amount){
+    return '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
+      '<span>'+label+'</span><span style="color:var(--neon);">$'+amount+'</span></div>';
+  };
 
   var html=
     '<div style="text-align:center;">'+
@@ -1062,14 +1073,18 @@ function _showSummary(){
       '<div><div style="font-size:10px;letter-spacing:2px;color:var(--tdim);margin-bottom:4px;">NIGHTS</div><div style="font-family:Orbitron,monospace;font-size:14px;color:#fff;">'+nights+'</div></div>'+
     '</div>'+
     '<div style="border-top:1px solid rgba(57,255,20,0.1);padding-top:14px;margin-bottom:14px;">'+
-      '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
-        '<span>'+nights+' night'+(nights>1?'s':'')+' \u00d7 $'+avg+'/night</span><span style="color:var(--neon);">$'+nightlyTotal+'</span></div>'+
-      '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
-        '<span>Cleaning fee</span><span style="color:var(--neon);">$'+cleaningFee+'</span></div>'+
+      _r(nights+' night'+(nights>1?'s':'')+' \u00d7 $'+avg+'/night',nightlyTotal)+
+      _r('Cleaning fee',cleaningFee);
+
+  if(petCount>0){
+    html+=_r('Pet fee ('+petCount+' pet'+(petCount>1?'s':'')+' \u00d7 $150)',petFee);
+  }
+
+  html+=_r('Transient Occupancy Tax (7%)',tot.toFixed(2))+
     '</div>'+
     '<div style="border-top:1px solid rgba(57,255,20,0.15);padding-top:14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">'+
       '<span style="font-family:Orbitron,monospace;font-size:12px;letter-spacing:2px;color:var(--tdim);">TOTAL</span>'+
-      '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal+'</span>'+
+      '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal.toFixed(2)+'</span>'+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:10px;">'+
       '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">CONTINUE TO PAYMENT \u2192</div>'+
@@ -1084,9 +1099,30 @@ function _showSummary(){
   _recalcPanel();
 }
 
+function _getPetCount(){
+  var toggle=document.getElementById('pet-toggle');
+  if(!toggle||!toggle.checked)return 0;
+  var sel=document.getElementById('pet-count');
+  return sel?parseInt(sel.value,10):0;
+}
+
+function _onPetChange(){
+  var toggle=document.getElementById('pet-toggle');
+  var wrap=document.getElementById('pet-count-wrap');
+  if(wrap)wrap.style.display=toggle&&toggle.checked?'flex':'none';
+  /* Re-render summary if dates are already selected */
+  if(_pcCheckin&&_pcCheckout&&_pcPriceData)_showSummary();
+}
+
+function _showPetSelector(show){
+  var el=document.getElementById('pet-selector');
+  if(el)el.style.display=show?'block':'none';
+}
+
 function _hideSummary(){
   var s=document.getElementById('panel-booking-summary');
   if(s){s.style.display='none';s.innerHTML='';}
+  _showPetSelector(false);
 }
 
 function _startCheckout(){
@@ -1102,7 +1138,7 @@ function _startCheckout(){
   fetch('/.netlify/functions/create-checkout',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({check_in:ciStr,check_out:coStr})
+    body:JSON.stringify({check_in:ciStr,check_out:coStr,pets:_getPetCount()})
   })
   .then(function(r){return r.json();})
   .then(function(data){
@@ -1321,6 +1357,22 @@ function renderPanelCal(){
             </div>
           </div>
           <div id="panel-cal-status" style="font-size:11px;color:var(--tdim);margin-top:10px;font-style:italic;text-align:center;"></div>
+          <!-- Pet Selection -->
+          <div id="pet-selector" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.15);border-radius:4px;padding:16px 20px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);cursor:pointer;display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="pet-toggle" onchange="_onPetChange()" style="accent-color:#39ff14;width:16px;height:16px;cursor:pointer;">
+                BRINGING PETS? (+$150/pet)
+              </label>
+              <div id="pet-count-wrap" style="display:none;align-items:center;gap:8px;">
+                <span style="font-size:12px;color:var(--tdim);">How many:</span>
+                <select id="pet-count" onchange="_onPetChange()" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:6px 12px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;border-radius:2px;cursor:pointer;">
+                  <option value="1">1 pet</option>
+                  <option value="2">2 pets</option>
+                </select>
+              </div>
+            </div>
+          </div>
           <!-- Booking Summary -->
           <div id="panel-booking-summary" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:20px;"></div>
         </div>
