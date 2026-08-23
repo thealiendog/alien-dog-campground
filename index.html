@@ -1060,7 +1060,7 @@ function updateSelectedDisplay(){
     const nights = Math.round((new Date(selectedEnd.y,selectedEnd.m,selectedEnd.d)-new Date(selectedStart.y,selectedStart.m,selectedStart.d))/(1000*60*60*24));
     disp.innerHTML = '<div style="background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);padding:8px 18px;border-radius:2px;font-family:Orbitron,monospace;font-size:11px;color:#39ff14;letter-spacing:1px;">✦ '+s+' → '+e+' · '+nights+' night'+(nights!==1?'s':'')+'</div><a href=\'#group-form\' style=\'background:#39ff14;color:#03000f;padding:8px 18px;font-family:Orbitron,monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-decoration:none;border-radius:2px;\'>Request These Dates ↓</a>';
     // Pre-fill the dates field in the form
-    const datesInput = document.querySelector(\'input[placeholder="e.g. June 14-16, 2025"]\');
+    const datesInput = document.querySelector('input[placeholder="e.g. June 14-16, 2025"]');
     if(datesInput) datesInput.value = s + ' → ' + e;
   } else if(selectedStart){
     const s = MONTHS[selectedStart.m].substring(0,3)+' '+selectedStart.d+', '+selectedStart.y;
