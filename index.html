@@ -258,6 +258,14 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 #booking-modal-close:hover{background:rgba(57,255,20,0.1);}
 @media(max-width:900px){#booking-modal-box{margin:10px;}#booking-modal .bm-two-col{grid-template-columns:1fr!important;gap:30px!important;}#booking-modal .bm-photo-grid{grid-template-columns:repeat(2,1fr)!important;}}
 @media(max-width:580px){#booking-modal{padding:10px;}#booking-modal .bm-photo-grid{grid-template-columns:1fr 1fr!important;}#booking-modal-box .bm-inner{padding:20px 16px!important;}}
+
+#inquiry-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;}
+#inquiry-modal.open{display:flex;}
+#inquiry-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,0,15,0.92);backdrop-filter:blur(8px);z-index:0;}
+#inquiry-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:800px;width:100%;margin:20px auto;padding:0;}
+#inquiry-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);width:36px;height:36px;font-size:18px;cursor:pointer;border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+#inquiry-modal-close:hover{background:rgba(57,255,20,0.1);}
+@media(max-width:580px){#inquiry-modal{padding:10px;}#inquiry-modal-box .im-inner{padding:20px 16px!important;}#inquiry-modal .inquiry-form{grid-template-columns:1fr!important;}}
 </style>
 </head>
 <body>
@@ -505,7 +513,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--pbright);">✦</span> Custom catering & activity options</li>
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--pbright);">✦</span> Custom pricing based on group size</li>
         </ul>
-        <a href="#group-form" class="btn-p" style="display:block;text-align:center;background:var(--pbright);box-shadow:0 0 28px rgba(155,93,229,0.4);">Request Group Quote <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2"/><circle cx="16" cy="6" r="2"/><circle cx="12" cy="5" r="2"/><path d="M2 20c0-4 2.5-6 6-6h8c3.5 0 6 2 6 6"/></svg></a>
+        <a href="#" onclick="openInquiryModal('Full Property Group Buyout');return false;" class="btn-p" style="display:block;text-align:center;background:var(--pbright);box-shadow:0 0 28px rgba(155,93,229,0.4);">Request Group Quote <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2"/><circle cx="16" cy="6" r="2"/><circle cx="12" cy="5" r="2"/><path d="M2 20c0-4 2.5-6 6-6h8c3.5 0 6 2 6 6"/></svg></a>
       </div>
 
       <!-- EVENTS -->
@@ -521,7 +529,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:#ffd60a;">✦</span> Movies under the stars</li>
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:#ffd60a;">✦</span> Ceremonies & celebrations</li>
         </ul>
-        <a href="#group-form" class="btn-p" style="display:block;text-align:center;background:#ffd60a;color:#03000f;box-shadow:0 0 28px rgba(255,214,10,0.3);">Plan Your Event <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+        <a href="#" onclick="openInquiryModal('');return false;" class="btn-p" style="display:block;text-align:center;background:#ffd60a;color:#03000f;box-shadow:0 0 28px rgba(255,214,10,0.3);">Plan Your Event <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
       </div>
 
     </div>
@@ -568,77 +576,12 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 
         <!-- Footer note -->
         <div style="padding:16px 28px;border-top:1px solid rgba(57,255,20,0.1);text-align:center;">
-          <p style="font-size:12px;color:var(--tdim);font-style:italic;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> This calendar will sync live with real bookings once we launch. For now, <a href="#group-form" style="color:var(--neon);">send us an inquiry</a> and we'll confirm availability within 24 hours.</p>
+          <p style="font-size:12px;color:var(--tdim);font-style:italic;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> This calendar will sync live with real bookings once we launch. For now, <a href="#" onclick="openInquiryModal('');return false;" style="color:var(--neon);">send us an inquiry</a> and we'll confirm availability within 24 hours.</p>
           <div style="margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;" id="selected-dates-display"></div>
         </div>
       </div>
 
-      <!-- Scroll CTA -->
-      <div style="text-align:center;margin-top:28px;">
-        <a href="#group-form" class="btn-p" style="display:inline-block;">Found Your Dates? Send Inquiry ↓</a>
-      </div>
-    </div>
-
-    <!-- GROUP / EVENT INQUIRY FORM -->
-    <div id="group-form" class="reveal" style="margin-top:60px;background:var(--card);border:1px solid rgba(57,255,20,0.2);padding:50px;">
-      <div style="text-align:center;margin-bottom:40px;">
-        <span class="sec-label">✦ Group & Event Inquiry</span>
-        <h3 style="font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:#fff;">Tell Us About Your <em style="color:var(--neon);font-style:normal;">Vision</em></h3>
-        <p style="font-size:14px;color:var(--tdim);margin-top:12px;">Fill out the form below and we'll get back to you within 24 hours with availability and custom pricing.</p>
-      </div>
-      <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:0 auto;" class="inquiry-form">
-        <input type="hidden" name="_subject" value="New Group/Event Inquiry - Alien Dog Campground">
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">YOUR NAME</label>
-          <input type="text" name="name" required placeholder="First & Last Name" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">EMAIL ADDRESS</label>
-          <input type="email" name="email" required placeholder="your@email.com" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">PHONE NUMBER</label>
-          <input type="tel" name="phone" placeholder="(555) 000-0000" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TYPE OF BOOKING</label>
-          <select name="booking_type" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;cursor:pointer;">
-            <option value="">Select type...</option>
-            <option>Full Property Group Buyout</option>
-            <option>Yoga / Wellness Retreat</option>
-            <option>Meteor Shower / Stargazing Event</option>
-            <option>Movies Under the Stars</option>
-            <option>Wedding / Ceremony</option>
-            <option>Birthday / Celebration</option>
-            <option>Corporate Retreat / Offsite</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">APPROXIMATE DATES</label>
-          <input type="text" name="dates" placeholder="e.g. June 14-16, 2025" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
-          <select name="guests" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;cursor:pointer;">
-            <option value="">Select size...</option>
-            <option>5-10 guests</option>
-            <option>11-20 guests</option>
-            <option>21-30 guests</option>
-            <option>31-50 guests</option>
-            <option>50+ guests</option>
-          </select>
-        </div>
-        <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TELL US ABOUT YOUR VISION</label>
-          <textarea name="message" required placeholder="Describe your event or group stay..." rows="4" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;resize:vertical;"></textarea>
-        </div>
-        <div style="grid-column:1/-1;text-align:center;">
-          <button type="submit" class="btn-p" style="font-size:13px;padding:16px 48px;">Send Inquiry 🛸</button>
-          <p style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;">We respond within 24 hours · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1679787a7f78736563666679646256627e73777a7f73787279713875797b">[email&#160;protected]</a></p>
-        </div>
-      </form>
-    </div>
+      
   </div>
 </section>
 
@@ -811,7 +754,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
     </div>
     <div class="footer-col"><h4>Explore</h4><ul><li><a href="#amenities">The Experience</a></li><li><a href="#dogs">The Alien Dogs</a></li><li><a href="#story">Our Story</a></li><li><a href="#location">Location</a></li>
     <li><a href="#build-journey">Gallery</a></li></ul></div>
-    <div class="footer-col"><h4>Stay</h4><ul><li><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener">Book on Airbnb</a></li><li><a href="#book">Book Direct</a></li><li><a href="#groups">Group Buyouts</a></li><li><a href="#group-form">Private Events</a></li></ul></div>
+    <div class="footer-col"><h4>Stay</h4><ul><li><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener">Book on Airbnb</a></li><li><a href="#book">Book Direct</a></li><li><a href="#groups">Group Buyouts</a></li><li><a href="#" onclick="openInquiryModal('');return false;">Private Events</a></li></ul></div>
     <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://instagram.com/aliendogcampground" target="_blank">Instagram</a></li><li><a href="https://facebook.com/TheAlienDog" target="_blank">Facebook</a></li><li><a href="/cdn-cgi/l/email-protection#036c6d6f6a6d66707673736c717743776b66626f6a666d676c642d606c6e">Email Us</a></li></ul></div>
   </div>
   <div class="footer-bottom">
@@ -820,7 +763,32 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+/* === INQUIRY MODAL === */
+function openInquiryModal(preselect){
+  preselect=preselect||"";
+  var modal=document.getElementById('inquiry-modal');
+  if(!modal)return;
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+  var sel=document.getElementById('inquiry-booking-type');
+  if(sel&&preselect){
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].text===preselect||sel.options[i].value===preselect){
+        sel.selectedIndex=i;break;
+      }
+    }
+  }else if(sel&&!preselect){
+    sel.selectedIndex=0;
+  }
+}
+function closeInquiryModal(){
+  var modal=document.getElementById('inquiry-modal');
+  if(!modal)return;
+  modal.classList.remove('open');
+  document.body.style.overflow='';
+}
+</script><script>
 const canvas=document.getElementById('stars-canvas');
 const ctx=canvas.getContext('2d');
 let stars=[];
@@ -954,7 +922,7 @@ function updateSelectedDisplay(){
     const s = MONTHS[selectedStart.m].substring(0,3)+' '+selectedStart.d+', '+selectedStart.y;
     const e = MONTHS[selectedEnd.m].substring(0,3)+' '+selectedEnd.d+', '+selectedEnd.y;
     const nights = Math.round((new Date(selectedEnd.y,selectedEnd.m,selectedEnd.d)-new Date(selectedStart.y,selectedStart.m,selectedStart.d))/(1000*60*60*24));
-    disp.innerHTML = '<div style="background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);padding:8px 18px;border-radius:2px;font-family:Orbitron,monospace;font-size:11px;color:#39ff14;letter-spacing:1px;">✦ '+s+' → '+e+' · '+nights+' night'+(nights!==1?'s':'')+'</div><a href=\'#group-form\' style=\'background:#39ff14;color:#03000f;padding:8px 18px;font-family:Orbitron,monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-decoration:none;border-radius:2px;\'>Request These Dates ↓</a>';
+    disp.innerHTML = '<div style="background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.3);padding:8px 18px;border-radius:2px;font-family:Orbitron,monospace;font-size:11px;color:#39ff14;letter-spacing:1px;">✦ '+s+' → '+e+' · '+nights+' night'+(nights!==1?'s':'')+'</div><a href=\'#\' onclick=\'openInquiryModal();return false;\' style=\'background:#39ff14;color:#03000f;padding:8px 18px;font-family:Orbitron,monospace;font-size:11px;font-weight:700;letter-spacing:1px;text-decoration:none;border-radius:2px;\'>Request These Dates ↓</a>';
     // Pre-fill the dates field in the form
     const datesInput = document.querySelector('input[placeholder="e.g. June 14-16, 2025"]');
     if(datesInput) datesInput.value = s + ' → ' + e;
@@ -1058,7 +1026,7 @@ function closeBookingModal(){
 }
 /* Close on Escape key */
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeBookingModal();}
+  if(e.key==='Escape'){closeBookingModal();closeInquiryModal();}
 });
 
 /* === PANEL 1 LIVE CALENDAR === */
@@ -1486,6 +1454,72 @@ function renderPanelCal(){
         </div>
 
       </div>
+    </div>
+  </div>
+</div>
+
+<div id="inquiry-modal">
+  <div id="inquiry-modal-overlay" onclick="closeInquiryModal()"></div>
+  <div id="inquiry-modal-box">
+    <button id="inquiry-modal-close" onclick="closeInquiryModal()">✕</button>
+    <div class="im-inner" style="padding:40px 44px;">
+      <div style="text-align:center;margin-bottom:32px;">
+        <span class="sec-label">✦ Group & Event Inquiry</span>
+        <h2 style="font-family:'Orbitron',monospace;font-size:clamp(22px,3.5vw,32px);font-weight:900;color:#fff;margin-bottom:8px;">Tell Us About Your <em style="color:var(--neon);font-style:normal;">Vision</em></h2>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.7;">Fill out the form below and we'll get back to you within 24 hours with availability and custom pricing.</p>
+      </div>
+      <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:0 auto;" class="inquiry-form">
+        <input type="hidden" name="_subject" value="New Group/Event Inquiry - Alien Dog Campground">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">YOUR NAME</label>
+          <input type="text" name="name" required placeholder="First & Last Name" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">EMAIL ADDRESS</label>
+          <input type="email" name="email" required placeholder="your@email.com" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">PHONE NUMBER</label>
+          <input type="tel" name="phone" placeholder="(555) 000-0000" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TYPE OF BOOKING</label>
+          <select name="booking_type" id="inquiry-booking-type" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;cursor:pointer;">
+            <option value="">Select type...</option>
+            <option>Full Property Group Buyout</option>
+            <option>Yoga / Wellness Retreat</option>
+            <option>Meteor Shower / Stargazing Event</option>
+            <option>Movies Under the Stars</option>
+            <option>Wedding / Ceremony</option>
+            <option>Birthday / Celebration</option>
+            <option>Corporate Retreat / Offsite</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">APPROXIMATE DATES</label>
+          <input type="text" name="dates" placeholder="e.g. June 14-16, 2025" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
+          <select name="guests" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;cursor:pointer;">
+            <option value="">Select size...</option>
+            <option>5-10 guests</option>
+            <option>11-20 guests</option>
+            <option>21-30 guests</option>
+            <option>31-50 guests</option>
+            <option>50+ guests</option>
+          </select>
+        </div>
+        <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TELL US ABOUT YOUR VISION</label>
+          <textarea name="message" required placeholder="Describe your event or group stay..." rows="4" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;resize:vertical;"></textarea>
+        </div>
+        <div style="grid-column:1/-1;text-align:center;">
+          <button type="submit" class="btn-p" style="font-size:13px;padding:16px 48px;">Send Inquiry 🛸</button>
+          <p style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;">We respond within 24 hours · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1679787a7f78736563666679646256627e73777a7f73787279713875797b">[email&#160;protected]</a></p>
+        </div>
+      </form>
     </div>
   </div>
 </div>
