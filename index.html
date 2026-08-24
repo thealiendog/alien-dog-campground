@@ -730,23 +730,12 @@ var _gqCheckin=null,_gqCheckout=null;
 var _gqYear,_gqMonth;
 var _gqCalLoaded=false;
 
-function openInquiryModal(preselect){
-  preselect=preselect||"";
+function openInquiryModal(){
   var modal=document.getElementById('inquiry-modal');
   if(!modal)return;
   modal.classList.add('open');
   document.body.style.overflow='hidden';
   loadInquiryCal();
-  var sel=document.getElementById('inquiry-booking-type');
-  if(sel&&preselect){
-    for(var i=0;i<sel.options.length;i++){
-      if(sel.options[i].text===preselect||sel.options[i].value===preselect){
-        sel.selectedIndex=i;break;
-      }
-    }
-  }else if(sel&&!preselect){
-    sel.selectedIndex=0;
-  }
 }
 function closeInquiryModal(){
   var modal=document.getElementById('inquiry-modal');
@@ -1790,8 +1779,8 @@ function renderPanelCal(){
 
       <!-- Optional: Additional Info -->
       <div style="margin-top:24px;margin-bottom:16px;text-align:center;">
-        <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--pbright);margin-bottom:6px;">✦ OPTIONAL</div>
-        <p style="font-size:12px;color:var(--tdim);font-style:italic;">Tell us about your group so we can prepare for your arrival.</p>
+        <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--pbright);margin-bottom:6px;">✦ GROUP DETAILS</div>
+        <p style="font-size:12px;color:var(--tdim);font-style:italic;">Help us prepare for your arrival — share your contact info and any special requests.</p>
       </div>
       <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:0 auto;" class="inquiry-form">
         <input type="hidden" name="_subject" value="New Group/Event Inquiry - Alien Dog Campground">
@@ -1807,35 +1796,18 @@ function renderPanelCal(){
           <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">PHONE NUMBER</label>
           <input type="tel" name="phone" placeholder="(555) 000-0000" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TYPE OF BOOKING</label>
-          <select name="booking_type" id="inquiry-booking-type" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;cursor:pointer;">
-            <option value="">Select type...</option>
-            <option>Group Booking</option>
-            <option>Yoga / Wellness Retreat</option>
-            <option>Meteor Shower / Stargazing Event</option>
-            <option>Movies Under the Stars</option>
-            <option>Wedding / Ceremony</option>
-            <option>Birthday / Celebration</option>
-            <option>Corporate Retreat / Offsite</option>
-            <option>Other</option>
-          </select>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">APPROXIMATE DATES</label>
-          <input type="text" name="dates" placeholder="e.g. June 14-16, 2025" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
+        <input type="hidden" name="booking_type" value="Group Booking">
         <div style="display:flex;flex-direction:column;gap:8px;">
           <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
           <input type="number" name="guests" id="gq-guests-count" min="1" max="20" placeholder="1-20" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
         </div>
-        <div style="grid-column:1/-1;display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">TELL US ABOUT YOUR VISION</label>
-          <textarea name="message" required placeholder="Describe your event or group stay..." rows="4" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;resize:vertical;"></textarea>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">ANYTHING WE SHOULD KNOW?</label>
+          <textarea name="message" placeholder="Special requests, arrival time, activities planned..." rows="3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;resize:vertical;"></textarea>
         </div>
         <div style="grid-column:1/-1;text-align:center;">
-          <button type="submit" class="btn-p" style="font-size:13px;padding:16px 48px;">Send Inquiry 🛸</button>
-          <p style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;line-height:1.6;">We'll follow up within 24 hours with custom pricing based on your group size and dates.</p>
+          <button type="submit" class="btn-p" style="font-size:13px;padding:16px 48px;">Send Group Details 🛸</button>
+          <p style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;line-height:1.6;">We'll send confirmation details after your dates are selected and payment is complete.</p>
         </div>
       </form>
     </div>
