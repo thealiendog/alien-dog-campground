@@ -1340,6 +1340,9 @@ window.galPage=function(p){
   _galCurrentPage=p;
   var grid=document.getElementById('gal-grid');
 
+  /* Lock grid height to prevent layout shift during swap */
+  grid.style.minHeight=grid.offsetHeight+'px';
+
   /* Fade out */
   grid.classList.add('gal-loading');
 
@@ -1350,6 +1353,8 @@ window.galPage=function(p){
     /* Preload new page images, then fade in */
     _galPreloadPage(p,function(){
       grid.classList.remove('gal-loading');
+      /* Release height lock after fade-in completes */
+      setTimeout(function(){grid.style.minHeight='';},300);
       _galTransitioning=false;
     });
 
