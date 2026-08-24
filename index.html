@@ -798,7 +798,10 @@ function _getGqDogCount(){
 
 function _getGqGuestCount(){
   var el=document.getElementById('gq-guests-count');
-  return el?parseInt(el.value,10)||1:1;
+  var v=el?parseInt(el.value,10)||1:1;
+  if(v>20){v=20;if(el)el.value=20;}
+  if(v<1){v=1;if(el)el.value=1;}
+  return v;
 }
 
 function _onGqDogChange(){
@@ -1788,7 +1791,7 @@ function renderPanelCal(){
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div style="display:flex;flex-direction:column;gap:6px;">
               <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
-              <input type="number" id="gq-guests-count" min="1" max="20" value="4" placeholder="1-20" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+              <input type="number" id="gq-guests-count" min="1" max="20" value="4" placeholder="1-20" oninput="if(this.value>20){this.value=20;}if(this.value<1&&this.value!==''){this.value=1;}" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;">
               <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">SPECIAL REQUESTS <span style="color:var(--tdim);font-size:8px;">(OPTIONAL)</span></label>
