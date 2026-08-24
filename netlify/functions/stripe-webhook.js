@@ -42,17 +42,23 @@ exports.handler = async function (event) {
 
   const session = stripeEvent.data.object;
   const meta = session.metadata || {};
+  const bookingType = meta.booking_type || "house";
   const checkIn = meta.check_in;
   const checkOut = meta.check_out;
   const nights = meta.nights || "0";
   const pets = meta.pets || "0";
+  const dogs = meta.dogs || "0";
+  const guests = meta.guests || "1";
   const guestName = session.customer_details?.name || "Direct Booking Guest";
   const guestEmail = session.customer_details?.email || "";
   const guestPhone = session.customer_details?.phone || "";
   const amountPaid = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
+  const isGroup = bookingType === "group";
+  const petDisplay = isGroup ? dogs : pets;
 
   console.log("Payment completed:", {
     sessionId: session.id,
+    bookingType,
     guestName,
     guestEmail,
     guestPhone,
@@ -60,7 +66,8 @@ exports.handler = async function (event) {
     checkIn,
     checkOut,
     nights,
-    pets,
+    pets: petDisplay,
+    guests: isGroup ? guests : "N/A",
   });
 
   if (!checkIn || !checkOut) {
@@ -70,7 +77,8 @@ exports.handler = async function (event) {
 
   /* Build array of dates to block (check-in through day before check-out) */
   const dates = [];
-  const calNote = `Direct booking - ${guestName} - ${guestEmail} - Pets: ${pets} - Stripe: ${session.id}`;
+  const typeLabel = isGroup ? "Group booking" : "House booking";
+  const calNote = `${typeLabel} - ${guestName} - ${guestEmail} - ${isGroup ? "Dogs: " + dogs + " - Guests: " + guests : "Pets: " + pets} - Stripe: ${session.id}`;
   const start = new Date(checkIn + "T12:00:00Z");
   const end = new Date(checkOut + "T12:00:00Z");
   for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
@@ -120,7 +128,12 @@ exports.handler = async function (event) {
   const { buildGuestEmail, buildOwnerEmail } = require("./lib/email-templates");
 
   /* --- Guest confirmation email --- */
-  const guestHtml = buildGuestEmail({ guestName, checkIn, checkOut, nights, pets, amountPaid });
+  const guestHtml = buildGuestEmail({
+    guestName, checkIn, checkOut, nights, amountPaid,
+    pets: petDisplay,
+    bookingType: isGroup ? "Group Booking" : null,
+    guests: isGroup ? guests : null,
+  });
 
   let guestEmailSuccess = false;
   if (guestEmail) {
@@ -152,8 +165,10 @@ exports.handler = async function (event) {
   /* --- Owner notification email --- */
   const ownerHtml = buildOwnerEmail({
     guestName, guestEmail, guestPhone, checkIn, checkOut,
-    nights, pets, amountPaid, sessionId: session.id,
+    nights, pets: petDisplay, amountPaid, sessionId: session.id,
     calendarSuccess, guestEmailSuccess,
+    bookingType: isGroup ? "Group Booking" : "House Booking",
+    guests: isGroup ? guests : null,
   });
 
   let ownerEmailSuccess = false;

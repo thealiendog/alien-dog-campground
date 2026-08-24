@@ -55,9 +55,10 @@ function fmtDate(d) {
  * @param {string} data.amountPaid    e.g. "715.83"
  */
 function buildGuestEmail(data) {
-  const { guestName, checkIn, checkOut, nights, pets, amountPaid } = data;
+  const { guestName, checkIn, checkOut, nights, pets, amountPaid, bookingType, guests } = data;
   const checkInFmt = fmtDate(checkIn);
   const checkOutFmt = fmtDate(checkOut);
+  const typeLabel = bookingType || "Booking";
 
   return `${EMAIL_HEAD}
 ${outerTableOpen}
@@ -77,7 +78,8 @@ ${outerTableOpen}
             <tr>${labelCell("Check-in")}${valueCell(checkInFmt)}</tr>
             <tr>${labelCell("Check-out")}${valueCell(checkOutFmt)}</tr>
             <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
-            ${parseInt(pets, 10) > 0 ? `<tr>${labelCell("Pets")}${valueCell(pets)}</tr>` : ""}
+            ${guests ? `<tr>${labelCell("Guests")}${valueCell(guests)}</tr>` : ""}
+            ${parseInt(pets, 10) > 0 ? `<tr>${labelCell(bookingType === "Group Booking" ? "Dogs" : "Pets")}${valueCell(pets)}</tr>` : ""}
             <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
           </table>
         </td></tr>
@@ -116,7 +118,9 @@ function buildOwnerEmail(data) {
   const {
     guestName, guestEmail, guestPhone, checkIn, checkOut,
     nights, pets, amountPaid, sessionId, calendarSuccess, guestEmailSuccess,
+    bookingType, guests,
   } = data;
+  const typeLabel = bookingType || "House Booking";
   const checkInFmt = fmtDate(checkIn);
   const checkOutFmt = fmtDate(checkOut);
   const calIcon = calendarSuccess ? "&#x2713;" : "&#x2717;";
@@ -131,7 +135,7 @@ ${outerTableOpen}
       <table role="presentation" width="560" cellpadding="0" cellspacing="0" bgcolor="${BG2}" style="max-width:560px;width:100%;background-color:${BG2};border:1px solid #162040;border-radius:6px;overflow:hidden;">
         <tr><td bgcolor="${NEON}" style="height:3px;background-color:${NEON};font-size:0;line-height:0;">&nbsp;</td></tr>
         <tr><td bgcolor="${BG2}" style="padding:28px 32px 20px;background-color:${BG2};">
-          <h1 style="margin:0 0 4px;font-family:${FONT_H};font-size:20px;font-weight:900;color:${NEON};letter-spacing:3px;text-transform:uppercase;">&#x1F6F8; New Direct Booking</h1>
+          <h1 style="margin:0 0 4px;font-family:${FONT_H};font-size:20px;font-weight:900;color:${NEON};letter-spacing:3px;text-transform:uppercase;">&#x1F6F8; New ${typeLabel}</h1>
           <p style="margin:0;font-family:${FONT_H};font-size:10px;color:${PURPLE};letter-spacing:2px;">${checkIn} &rarr; ${checkOut}</p>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:0 32px;background-color:${BG2};"><div style="height:1px;background:${BORDER};"></div></td></tr>
@@ -143,7 +147,8 @@ ${outerTableOpen}
             <tr>${labelCell("Check-in")}${valueCell(checkInFmt)}</tr>
             <tr>${labelCell("Check-out")}${valueCell(checkOutFmt)}</tr>
             <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
-            <tr>${labelCell("Pets")}${valueCell(pets)}</tr>
+            ${guests ? `<tr>${labelCell("Guests")}${valueCell(guests)}</tr>` : ""}
+            <tr>${labelCell(typeLabel === "Group Booking" ? "Dogs" : "Pets")}${valueCell(pets)}</tr>
             <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
           </table>
         </td></tr>
