@@ -117,37 +117,68 @@ exports.handler = async function (event) {
     ? `<tr><td style="padding:8px 0;color:#8aad80;border-bottom:1px solid #0a0a2a;">Pets</td><td style="padding:8px 0;color:#e8f4e3;border-bottom:1px solid #0a0a2a;text-align:right;">${pets}</td></tr>`
     : "";
 
+  /* Shared email constants */
+  const FONT_H = "'Trebuchet MS', 'Lucida Sans', Arial, sans-serif";
+  const FONT_B = "'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
+  const NEON = "#39ff14";
+  const PURPLE = "#c77dff";
+  const BG = "#03000f";
+  const BG2 = "#06001e";
+  const TEXT = "#e8f4e3";
+  const DIM = "#8aad80";
+  const BORDER = "#0d0d2a";
+
+  const labelCell = (text) => `<td style="padding:10px 12px;color:${DIM};font-family:${FONT_H};font-size:10px;letter-spacing:2px;text-transform:uppercase;border-bottom:1px solid ${BORDER};">${text}</td>`;
+  const valueCell = (text, highlight) => `<td style="padding:10px 12px;color:${highlight ? NEON : TEXT};font-family:${FONT_B};font-size:14px;text-align:right;border-bottom:1px solid ${BORDER};${highlight ? "font-weight:bold;font-size:20px;" : ""}">${text}</td>`;
+
   /* --- Guest confirmation email --- */
   const guestHtml = `
-<div style="background:#03000f;padding:40px 20px;font-family:'Helvetica Neue',Arial,sans-serif;">
-  <div style="max-width:520px;margin:0 auto;background:#06001e;border:1px solid rgba(57,255,20,0.2);border-radius:4px;overflow:hidden;">
-    <div style="background:rgba(57,255,20,0.08);padding:32px 28px;text-align:center;border-bottom:1px solid rgba(57,255,20,0.15);">
-      <div style="font-size:36px;margin-bottom:12px;">&#x1F6F8;</div>
-      <h1 style="color:#39ff14;font-size:22px;margin:0 0 6px;letter-spacing:2px;">BOOKING CONFIRMED</h1>
-      <p style="color:#8aad80;font-size:13px;margin:0;letter-spacing:1px;">ALIEN DOG CAMPGROUND &middot; JOSHUA TREE, CA</p>
-    </div>
-    <div style="padding:28px;">
-      <p style="color:#e8f4e3;font-size:15px;line-height:1.7;margin:0 0 20px;">
-        Hey ${guestName.split(" ")[0]} &#x1F44B; &mdash; your desert escape is locked in. Here are your booking details:
-      </p>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
-        <tr><td style="padding:8px 0;color:#8aad80;border-bottom:1px solid #0a0a2a;">Check-in</td><td style="padding:8px 0;color:#e8f4e3;border-bottom:1px solid #0a0a2a;text-align:right;">${checkInFmt}</td></tr>
-        <tr><td style="padding:8px 0;color:#8aad80;border-bottom:1px solid #0a0a2a;">Check-out</td><td style="padding:8px 0;color:#e8f4e3;border-bottom:1px solid #0a0a2a;text-align:right;">${checkOutFmt}</td></tr>
-        <tr><td style="padding:8px 0;color:#8aad80;border-bottom:1px solid #0a0a2a;">Nights</td><td style="padding:8px 0;color:#e8f4e3;border-bottom:1px solid #0a0a2a;text-align:right;">${nights}</td></tr>
-        ${petLine}
-        <tr><td style="padding:8px 0;color:#8aad80;font-weight:bold;">Total paid</td><td style="padding:8px 0;color:#39ff14;text-align:right;font-weight:bold;font-size:18px;">$${amountPaid}</td></tr>
+<div style="margin:0;padding:0;background:${BG};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:${BG2};border:1px solid #162040;border-radius:6px;overflow:hidden;">
+        <!-- Top accent bar -->
+        <tr><td style="height:3px;background:linear-gradient(90deg,${NEON},${PURPLE});font-size:0;line-height:0;">&nbsp;</td></tr>
+        <!-- Header -->
+        <tr><td style="padding:36px 32px 28px;text-align:center;">
+          <div style="font-size:42px;line-height:1;margin-bottom:16px;">&#x1F6F8;</div>
+          <h1 style="margin:0 0 4px;font-family:${FONT_H};font-size:24px;font-weight:900;color:${NEON};letter-spacing:4px;text-transform:uppercase;">Booking Confirmed</h1>
+          <p style="margin:0;font-family:${FONT_H};font-size:11px;color:${PURPLE};letter-spacing:3px;text-transform:uppercase;">Alien Dog Campground &middot; Joshua Tree, CA</p>
+        </td></tr>
+        <!-- Divider -->
+        <tr><td style="padding:0 32px;"><div style="height:1px;background:linear-gradient(90deg,transparent,${NEON}33,transparent);"></div></td></tr>
+        <!-- Greeting -->
+        <tr><td style="padding:24px 32px 20px;">
+          <p style="margin:0;font-family:${FONT_B};font-size:15px;color:${TEXT};line-height:1.7;">Hey ${guestName.split(" ")[0]} &mdash; your desert escape is locked in. The universe has your reservation.</p>
+        </td></tr>
+        <!-- Booking details table -->
+        <tr><td style="padding:0 32px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${BORDER};border-radius:4px;overflow:hidden;">
+            <tr>${labelCell("Check-in")}${valueCell(checkInFmt)}</tr>
+            <tr>${labelCell("Check-out")}${valueCell(checkOutFmt)}</tr>
+            <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
+            ${parseInt(pets, 10) > 0 ? `<tr>${labelCell("Pets")}${valueCell(pets)}</tr>` : ""}
+            <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
+          </table>
+        </td></tr>
+        <!-- Next steps -->
+        <tr><td style="padding:24px 32px;">
+          <div style="background:#0a0f24;border-left:3px solid ${PURPLE};border-radius:0 4px 4px 0;padding:16px 20px;">
+            <p style="margin:0 0 4px;font-family:${FONT_H};font-size:10px;color:${PURPLE};letter-spacing:2px;text-transform:uppercase;">What happens next</p>
+            <p style="margin:0;font-family:${FONT_B};font-size:13px;color:${DIM};line-height:1.7;">Check-in instructions and property access details will arrive closer to your stay. 5 acres of desert magic are waiting.</p>
+          </div>
+        </td></tr>
+        <!-- Contact -->
+        <tr><td style="padding:0 32px 28px;">
+          <p style="margin:0;font-family:${FONT_B};font-size:12px;color:${DIM};">Questions? <a href="mailto:onlinesupport@aliendog.com" style="color:${NEON};text-decoration:none;">onlinesupport@aliendog.com</a></p>
+        </td></tr>
+        <!-- Footer -->
+        <tr><td style="padding:16px 32px;border-top:1px solid ${BORDER};text-align:center;">
+          <p style="margin:0;font-family:${FONT_H};font-size:9px;color:#4a5a44;letter-spacing:2px;text-transform:uppercase;">Alien Dog Campground &middot; Joshua Tree, California</p>
+        </td></tr>
       </table>
-      <p style="color:#8aad80;font-size:13px;line-height:1.7;margin:0 0 24px;">
-        We'll send you detailed check-in instructions and property access info closer to your stay. In the meantime, start getting excited &mdash; 5 acres of desert magic are waiting for you.
-      </p>
-      <p style="color:#8aad80;font-size:13px;margin:0;">
-        Questions? Reach us at <a href="mailto:onlinesupport@aliendog.com" style="color:#39ff14;">onlinesupport@aliendog.com</a>
-      </p>
-    </div>
-    <div style="background:rgba(57,255,20,0.05);padding:16px 28px;text-align:center;border-top:1px solid rgba(57,255,20,0.1);">
-      <p style="color:#8aad80;font-size:11px;margin:0;">Alien Dog Campground &middot; Joshua Tree, California</p>
-    </div>
-  </div>
+    </td></tr>
+  </table>
 </div>`;
 
   let guestEmailSuccess = false;
@@ -182,30 +213,71 @@ exports.handler = async function (event) {
     ? '<span style="color:#39ff14;">&#x2713; Dates blocked in Hospitable</span>'
     : '<span style="color:#ff5050;font-weight:bold;">&#x2717; FAILED to block dates — do this manually ASAP</span>';
 
+  const calIcon = calendarSuccess ? "&#x2713;" : "&#x2717;";
+  const calColor = calendarSuccess ? NEON : "#ff5050";
+  const calText = calendarSuccess ? "Dates blocked in Hospitable" : "FAILED to block dates — do this manually ASAP";
+  const guestIcon = guestEmailSuccess ? "&#x2713;" : "&#x2717;";
+  const guestColor = guestEmailSuccess ? NEON : "#ff5050";
+  const guestText = guestEmailSuccess ? "Confirmation sent" : "Failed or skipped";
+
   const ownerHtml = `
-<div style="font-family:'Helvetica Neue',Arial,sans-serif;padding:20px;background:#03000f;color:#e8f4e3;">
-  <div style="max-width:520px;margin:0 auto;background:#06001e;border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:28px;">
-    <h2 style="color:#39ff14;font-size:18px;margin:0 0 20px;">&#x1F6F8; New Direct Booking</h2>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-      <tr><td style="padding:6px 0;color:#8aad80;">Guest</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${guestName}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Email</td><td style="padding:6px 0;text-align:right;"><a href="mailto:${guestEmail}" style="color:#39ff14;">${guestEmail}</a></td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Phone</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${guestPhone || "Not provided"}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Check-in</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${checkInFmt}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Check-out</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${checkOutFmt}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Nights</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${nights}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;">Pets</td><td style="padding:6px 0;color:#e8f4e3;text-align:right;">${pets}</td></tr>
-      <tr><td style="padding:6px 0;color:#8aad80;font-weight:bold;">Total paid</td><td style="padding:6px 0;color:#39ff14;text-align:right;font-weight:bold;">$${amountPaid}</td></tr>
-    </table>
-    <div style="border-top:1px solid #0a0a2a;padding-top:16px;margin-bottom:16px;">
-      <p style="margin:0 0 8px;font-size:13px;">Calendar: ${calStatusLine}</p>
-      <p style="margin:0 0 8px;font-size:13px;">Guest email: ${guestEmailSuccess ? '<span style="color:#39ff14;">&#x2713; Sent</span>' : '<span style="color:#ff5050;">&#x2717; Failed or skipped</span>'}</p>
-      <p style="margin:0;font-size:11px;color:#8aad80;">Stripe session: ${session.id}</p>
-    </div>
-    <div style="background:rgba(255,214,10,0.08);border:1px solid rgba(255,214,10,0.3);border-radius:4px;padding:14px;margin-top:12px;">
-      <p style="color:#ffd60a;font-size:13px;margin:0;font-weight:bold;">&#x26A0; Action required</p>
-      <p style="color:#e8f4e3;font-size:13px;margin:8px 0 0;line-height:1.6;">Add this guest's reservation manually in Hospitable to trigger automated messaging (check-in instructions, house rules, etc).</p>
-    </div>
-  </div>
+<div style="margin:0;padding:0;background:${BG};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:${BG2};border:1px solid #162040;border-radius:6px;overflow:hidden;">
+        <!-- Top accent bar -->
+        <tr><td style="height:3px;background:linear-gradient(90deg,${NEON},${PURPLE});font-size:0;line-height:0;">&nbsp;</td></tr>
+        <!-- Header -->
+        <tr><td style="padding:28px 32px 20px;">
+          <h1 style="margin:0 0 4px;font-family:${FONT_H};font-size:20px;font-weight:900;color:${NEON};letter-spacing:3px;text-transform:uppercase;">&#x1F6F8; New Direct Booking</h1>
+          <p style="margin:0;font-family:${FONT_H};font-size:10px;color:${PURPLE};letter-spacing:2px;">${checkIn} &rarr; ${checkOut}</p>
+        </td></tr>
+        <!-- Divider -->
+        <tr><td style="padding:0 32px;"><div style="height:1px;background:linear-gradient(90deg,transparent,${NEON}33,transparent);"></div></td></tr>
+        <!-- Guest & booking details -->
+        <tr><td style="padding:20px 32px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${BORDER};border-radius:4px;overflow:hidden;">
+            <tr>${labelCell("Guest")}${valueCell(guestName)}</tr>
+            <tr>${labelCell("Email")}<td style="padding:10px 12px;font-family:${FONT_B};font-size:14px;text-align:right;border-bottom:1px solid ${BORDER};"><a href="mailto:${guestEmail}" style="color:${NEON};text-decoration:none;">${guestEmail}</a></td></tr>
+            <tr>${labelCell("Phone")}${valueCell(guestPhone || "Not provided")}</tr>
+            <tr>${labelCell("Check-in")}${valueCell(checkInFmt)}</tr>
+            <tr>${labelCell("Check-out")}${valueCell(checkOutFmt)}</tr>
+            <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
+            <tr>${labelCell("Pets")}${valueCell(pets)}</tr>
+            <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
+          </table>
+        </td></tr>
+        <!-- System status -->
+        <tr><td style="padding:0 32px 20px;">
+          <div style="background:#0a0f24;border:1px solid ${BORDER};border-radius:4px;padding:16px 20px;">
+            <p style="margin:0 0 4px;font-family:${FONT_H};font-size:10px;color:${PURPLE};letter-spacing:2px;text-transform:uppercase;">System Status</p>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:8px;">
+              <tr>
+                <td style="padding:4px 0;font-family:${FONT_B};font-size:13px;color:${DIM};">Calendar</td>
+                <td style="padding:4px 0;font-family:${FONT_B};font-size:13px;color:${calColor};text-align:right;">${calIcon} ${calText}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 0;font-family:${FONT_B};font-size:13px;color:${DIM};">Guest email</td>
+                <td style="padding:4px 0;font-family:${FONT_B};font-size:13px;color:${guestColor};text-align:right;">${guestIcon} ${guestText}</td>
+              </tr>
+            </table>
+            <p style="margin:10px 0 0;font-family:${FONT_B};font-size:11px;color:#4a5a44;">Stripe: ${session.id}</p>
+          </div>
+        </td></tr>
+        <!-- Action required -->
+        <tr><td style="padding:0 32px 24px;">
+          <div style="background:#1a1000;border:1px solid #4d3800;border-left:3px solid #ffd60a;border-radius:0 4px 4px 0;padding:16px 20px;">
+            <p style="margin:0 0 6px;font-family:${FONT_H};font-size:11px;color:#ffd60a;letter-spacing:2px;text-transform:uppercase;">&#x26A0; Action Required</p>
+            <p style="margin:0;font-family:${FONT_B};font-size:13px;color:${TEXT};line-height:1.6;">Add this guest's reservation manually in Hospitable to trigger automated messaging (check-in instructions, house rules, etc).</p>
+          </div>
+        </td></tr>
+        <!-- Footer -->
+        <tr><td style="padding:16px 32px;border-top:1px solid ${BORDER};text-align:center;">
+          <p style="margin:0;font-family:${FONT_H};font-size:9px;color:#4a5a44;letter-spacing:2px;text-transform:uppercase;">Alien Dog Campground &middot; Internal Notification</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
 </div>`;
 
   let ownerEmailSuccess = false;
