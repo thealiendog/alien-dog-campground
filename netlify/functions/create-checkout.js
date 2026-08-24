@@ -130,6 +130,7 @@ async function handleGroupBooking(body, stripeKey) {
   const { check_in, check_out } = body;
   const dogs = Math.min(Math.max(parseInt(body.dogs, 10) || 0, 0), GROUP_MAX_DOGS);
   const guests = Math.min(Math.max(parseInt(body.guests, 10) || 1, 1), 20);
+  const notes = (body.notes || "").substring(0, 500);
   const nightCount = countNights(check_in, check_out);
 
   if (nightCount < GROUP_MIN_NIGHTS) {
@@ -169,6 +170,7 @@ async function handleGroupBooking(body, stripeKey) {
       dogs: String(dogs),
       guests: String(guests),
       tot: String(tot),
+      notes: notes,
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",

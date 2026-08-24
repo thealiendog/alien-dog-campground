@@ -809,8 +809,10 @@ function _showGqSummary(){
   var summary=document.getElementById('gq-booking-summary');
   var status=document.getElementById('gq-cal-status');
   var dogsWrap=document.getElementById('gq-dogs-wrap');
+  var extras=document.getElementById('gq-extras');
   if(!summary)return;
   if(dogsWrap)dogsWrap.style.display='block';
+  if(extras)extras.style.display='block';
 
   var nights=Math.round((_gqCheckout-_gqCheckin)/(1000*60*60*24));
   if(nights<2){
@@ -878,6 +880,8 @@ function _hideGqSummary(){
   if(s){s.style.display='none';s.innerHTML='';}
   var d=document.getElementById('gq-dogs-wrap');
   if(d)d.style.display='none';
+  var ex=document.getElementById('gq-extras');
+  if(ex)ex.style.display='none';
 }
 
 function _resetGqSelection(){
@@ -886,6 +890,11 @@ function _resetGqSelection(){
   var status=document.getElementById('gq-cal-status');
   if(status)status.textContent='Select your check-in date';
   renderInquiryCal();
+}
+
+function _getGqNotes(){
+  var el=document.getElementById('gq-notes');
+  return el?el.value.trim():'';
 }
 
 function _startGroupCheckout(){
@@ -906,7 +915,8 @@ function _startGroupCheckout(){
       check_in:ciStr,
       check_out:coStr,
       dogs:_getGqDogCount(),
-      guests:_getGqGuestCount()
+      guests:_getGqGuestCount(),
+      notes:_getGqNotes()
     })
   })
   .then(function(r){return r.json();})
@@ -1773,43 +1783,22 @@ function renderPanelCal(){
             </select>
           </div>
         </div>
+        <!-- Guests & Notes (shown after dates selected) -->
+        <div id="gq-extras" style="display:none;margin-top:16px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
+              <input type="number" id="gq-guests-count" min="1" max="20" value="4" placeholder="1-20" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">SPECIAL REQUESTS <span style="color:var(--tdim);font-size:8px;">(OPTIONAL)</span></label>
+              <input type="text" id="gq-notes" placeholder="Arrival time, activities, etc." style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+            </div>
+          </div>
+        </div>
         <!-- Booking Summary -->
         <div id="gq-booking-summary" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:20px;"></div>
       </div>
-
-      <!-- Optional: Additional Info -->
-      <div style="margin-top:24px;margin-bottom:16px;text-align:center;">
-        <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--pbright);margin-bottom:6px;">✦ GROUP DETAILS</div>
-        <p style="font-size:12px;color:var(--tdim);font-style:italic;">Help us prepare for your arrival — share your contact info and any special requests.</p>
-      </div>
-      <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:0 auto;" class="inquiry-form">
-        <input type="hidden" name="_subject" value="New Group/Event Inquiry - Alien Dog Campground">
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">YOUR NAME</label>
-          <input type="text" name="name" required placeholder="First & Last Name" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">EMAIL ADDRESS</label>
-          <input type="email" name="email" required placeholder="your@email.com" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">PHONE NUMBER</label>
-          <input type="tel" name="phone" placeholder="(555) 000-0000" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <input type="hidden" name="booking_type" value="Group Booking">
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
-          <input type="number" name="guests" id="gq-guests-count" min="1" max="20" placeholder="1-20" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">ANYTHING WE SHOULD KNOW?</label>
-          <textarea name="message" placeholder="Special requests, arrival time, activities planned..." rows="3" style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px 16px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;resize:vertical;"></textarea>
-        </div>
-        <div style="grid-column:1/-1;text-align:center;">
-          <button type="submit" class="btn-p" style="font-size:13px;padding:16px 48px;">Send Group Details 🛸</button>
-          <p style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;line-height:1.6;">We'll send confirmation details after your dates are selected and payment is complete.</p>
-        </div>
-      </form>
     </div>
   </div>
 </div>

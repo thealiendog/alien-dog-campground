@@ -118,7 +118,7 @@ function buildOwnerEmail(data) {
   const {
     guestName, guestEmail, guestPhone, checkIn, checkOut,
     nights, pets, amountPaid, sessionId, calendarSuccess, guestEmailSuccess,
-    bookingType, guests,
+    bookingType, guests, notes,
   } = data;
   const typeLabel = bookingType || "House Booking";
   const checkInFmt = fmtDate(checkIn);
@@ -150,6 +150,7 @@ ${outerTableOpen}
             ${guests ? `<tr>${labelCell("Guests")}${valueCell(guests)}</tr>` : ""}
             <tr>${labelCell(typeLabel === "Group Booking" ? "Dogs" : "Pets")}${valueCell(pets)}</tr>
             <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
+            ${notes ? `<tr>${labelCell("Notes")}${valueCell(notes)}</tr>` : ""}
           </table>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:0 32px 20px;background-color:${BG2};">

@@ -49,6 +49,7 @@ exports.handler = async function (event) {
   const pets = meta.pets || "0";
   const dogs = meta.dogs || "0";
   const guests = meta.guests || "1";
+  const notes = meta.notes || "";
   const guestName = session.customer_details?.name || "Direct Booking Guest";
   const guestEmail = session.customer_details?.email || "";
   const guestPhone = session.customer_details?.phone || "";
@@ -78,7 +79,7 @@ exports.handler = async function (event) {
   /* Build array of dates to block (check-in through day before check-out) */
   const dates = [];
   const typeLabel = isGroup ? "Group booking" : "House booking";
-  const calNote = `${typeLabel} - ${guestName} - ${guestEmail} - ${isGroup ? "Dogs: " + dogs + " - Guests: " + guests : "Pets: " + pets} - Stripe: ${session.id}`;
+  const calNote = `${typeLabel} - ${guestName} - ${guestEmail} - ${isGroup ? "Dogs: " + dogs + " - Guests: " + guests : "Pets: " + pets}${notes ? " - Notes: " + notes : ""} - Stripe: ${session.id}`;
   const start = new Date(checkIn + "T12:00:00Z");
   const end = new Date(checkOut + "T12:00:00Z");
   for (let d = new Date(start); d < end; d.setDate(d.getDate() + 1)) {
@@ -169,6 +170,7 @@ exports.handler = async function (event) {
     calendarSuccess, guestEmailSuccess,
     bookingType: isGroup ? "Group Booking" : "House Booking",
     guests: isGroup ? guests : null,
+    notes: notes || null,
   });
 
   let ownerEmailSuccess = false;
