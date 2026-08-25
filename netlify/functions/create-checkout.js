@@ -59,10 +59,21 @@ function errorResponse(statusCode, message) {
   };
 }
 
+function extractGuestInfo(body) {
+  return {
+    name: (body.guest_name || "").substring(0, 200),
+    email: (body.guest_email || "").substring(0, 200),
+    phone: (body.guest_phone || "").substring(0, 50),
+    city: (body.guest_city || "").substring(0, 100),
+    state: (body.guest_state || "").substring(0, 50),
+  };
+}
+
 async function handleHouseBooking(body, stripeKey) {
   const { check_in, check_out } = body;
   const pets = Math.min(Math.max(parseInt(body.pets, 10) || 0, 0), HOUSE_MAX_PETS);
   const guests = Math.min(Math.max(parseInt(body.guests, 10) || 1, 1), 4);
+  const guest = extractGuestInfo(body);
 
   const priceData = await fetchPrices(check_in, check_out);
   const prices = extractPrices(priceData);
@@ -93,6 +104,7 @@ async function handleHouseBooking(body, stripeKey) {
   const stripe = new Stripe(stripeKey);
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    customer_email: guest.email || undefined,
     line_items: [
       {
         price_data: {
@@ -116,6 +128,10 @@ async function handleHouseBooking(body, stripeKey) {
       pets: String(pets),
       guests: String(guests),
       tot: String(tot),
+      guest_name: guest.name,
+      guest_phone: guest.phone,
+      guest_city: guest.city,
+      guest_state: guest.state,
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",
@@ -133,6 +149,7 @@ async function handleGroupBooking(body, stripeKey) {
   const dogs = Math.min(Math.max(parseInt(body.dogs, 10) || 0, 0), GROUP_MAX_DOGS);
   const guests = Math.min(Math.max(parseInt(body.guests, 10) || 1, 1), 20);
   const notes = (body.notes || "").substring(0, 500);
+  const guest = extractGuestInfo(body);
   const nightCount = countNights(check_in, check_out);
 
   if (nightCount < GROUP_MIN_NIGHTS) {
@@ -149,6 +166,7 @@ async function handleGroupBooking(body, stripeKey) {
   const stripe = new Stripe(stripeKey);
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
+    customer_email: guest.email || undefined,
     line_items: [
       {
         price_data: {
@@ -173,6 +191,10 @@ async function handleGroupBooking(body, stripeKey) {
       guests: String(guests),
       tot: String(tot),
       notes: notes,
+      guest_name: guest.name,
+      guest_phone: guest.phone,
+      guest_city: guest.city,
+      guest_state: guest.state,
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",

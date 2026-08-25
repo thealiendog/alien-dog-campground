@@ -1027,9 +1027,21 @@ function _showGqSummary(){
       '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal.toFixed(2)+'</span>'+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:10px;">'+
-      '<div id="gq-pay-btn" onclick="_startGroupCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">CONTINUE TO PAYMENT \u2192</div>'+
+      '<div id="gq-reserve-btn" onclick="_showGqGuestForm()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">RESERVE</div>'+
     '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe. Prices shown are estimates and may vary.</div>'+
+    '<div id="gq-guest-form" style="display:none;margin-top:18px;border-top:1px solid rgba(57,255,20,0.1);padding-top:18px;">'+
+      '<div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:2px;color:var(--neon);margin-bottom:14px;text-align:center;">YOUR DETAILS</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+        '<input type="text" id="gq-fname" placeholder="Full Name" required style="grid-column:1/-1;background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="email" id="gq-email" placeholder="Email" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="tel" id="gq-phone" placeholder="Phone Number" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="text" id="gq-city" placeholder="City" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="text" id="gq-state" placeholder="State" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+      '</div>'+
+      '<div id="gq-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
+      '<div id="gq-pay-btn" onclick="_startGroupCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
+    '</div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetGqSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
     '</div>';
 
@@ -1059,8 +1071,17 @@ function _getGqNotes(){
   return el?el.value.trim():'';
 }
 
+function _showGqGuestForm(){
+  var f=document.getElementById('gq-guest-form');
+  var r=document.getElementById('gq-reserve-btn');
+  if(f)f.style.display='block';
+  if(r)r.style.display='none';
+}
+
 function _startGroupCheckout(){
   if(!_gqCheckin||!_gqCheckout)return;
+  var info=_validateForm('gq');
+  if(!info)return;
   var btn=document.getElementById('gq-pay-btn');
   if(!btn)return;
   btn.textContent='PROCESSING...';
@@ -1078,7 +1099,12 @@ function _startGroupCheckout(){
       check_out:coStr,
       dogs:_getGqDogCount(),
       guests:_getGqGuestCount(),
-      notes:_getGqNotes()
+      notes:_getGqNotes(),
+      guest_name:info.guest_name,
+      guest_email:info.guest_email,
+      guest_phone:info.guest_phone,
+      guest_city:info.guest_city,
+      guest_state:info.guest_state
     })
   })
   .then(function(r){return r.json();})
@@ -1685,9 +1711,21 @@ function _showSummary(){
       '<span style="font-family:Orbitron,monospace;font-size:24px;font-weight:900;color:var(--neon);text-shadow:0 0 12px rgba(57,255,20,0.3);">$'+grandTotal.toFixed(2)+'</span>'+
     '</div>'+
     '<div style="display:flex;flex-direction:column;gap:10px;">'+
-      '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">CONTINUE TO PAYMENT \u2192</div>'+
+      '<div id="reserve-btn" onclick="_showGuestForm()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;">RESERVE</div>'+
     '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe. Prices shown are estimates and may vary.</div>'+
+    '<div id="house-guest-form" style="display:none;margin-top:18px;border-top:1px solid rgba(57,255,20,0.1);padding-top:18px;">'+
+      '<div style="font-family:Orbitron,monospace;font-size:10px;letter-spacing:2px;color:var(--neon);margin-bottom:14px;text-align:center;">YOUR DETAILS</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">'+
+        '<input type="text" id="h-fname" placeholder="Full Name" required style="grid-column:1/-1;background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="email" id="h-email" placeholder="Email" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="tel" id="h-phone" placeholder="Phone Number" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="text" id="h-city" placeholder="City" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+        '<input type="text" id="h-state" placeholder="State" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
+      '</div>'+
+      '<div id="h-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
+      '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
+    '</div>'+
+    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
     '</div>';
 
@@ -1732,8 +1770,36 @@ function _getHouseGuests(){
   return v;
 }
 
+function _showGuestForm(){
+  var f=document.getElementById('house-guest-form');
+  var r=document.getElementById('reserve-btn');
+  if(f)f.style.display='block';
+  if(r)r.style.display='none';
+}
+
+function _validateForm(prefix){
+  var name=document.getElementById(prefix+'-fname');
+  var email=document.getElementById(prefix+'-email');
+  var phone=document.getElementById(prefix+'-phone');
+  var city=document.getElementById(prefix+'-city');
+  var state=document.getElementById(prefix+'-state');
+  var err=document.getElementById(prefix===''?'h-form-error':prefix+'-form-error');
+  if(!name.value.trim()||!email.value.trim()||!phone.value.trim()||!city.value.trim()||!state.value.trim()){
+    if(err){err.textContent='Please fill in all fields.';err.style.display='block';}
+    return null;
+  }
+  if(!email.value.includes('@')){
+    if(err){err.textContent='Please enter a valid email address.';err.style.display='block';}
+    return null;
+  }
+  if(err)err.style.display='none';
+  return {guest_name:name.value.trim(),guest_email:email.value.trim(),guest_phone:phone.value.trim(),guest_city:city.value.trim(),guest_state:state.value.trim()};
+}
+
 function _startCheckout(){
   if(!_pcCheckin||!_pcCheckout)return;
+  var info=_validateForm('h');
+  if(!info)return;
   var btn=document.getElementById('pay-btn');
   if(!btn)return;
   btn.textContent='PROCESSING...';
@@ -1745,7 +1811,7 @@ function _startCheckout(){
   fetch('/.netlify/functions/create-checkout',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({check_in:ciStr,check_out:coStr,pets:_getPetCount(),guests:_getHouseGuests()})
+    body:JSON.stringify({check_in:ciStr,check_out:coStr,pets:_getPetCount(),guests:_getHouseGuests(),guest_name:info.guest_name,guest_email:info.guest_email,guest_phone:info.guest_phone,guest_city:info.guest_city,guest_state:info.guest_state})
   })
   .then(function(r){return r.json();})
   .then(function(data){

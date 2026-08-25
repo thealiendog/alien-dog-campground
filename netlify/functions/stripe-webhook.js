@@ -51,11 +51,13 @@ exports.handler = async function (event) {
   const dogs = meta.dogs || "0";
   const guests = meta.guests || "1";
   const notes = meta.notes || "";
-  const guestName = session.customer_details?.name || "Direct Booking Guest";
+  const guestName = meta.guest_name || session.customer_details?.name || "Direct Booking Guest";
   const guestEmail = session.customer_details?.email || "";
-  const guestPhone = session.customer_details?.phone || "";
+  const guestPhone = meta.guest_phone || session.customer_details?.phone || "";
   const addr = session.customer_details?.address || {};
-  const guestCity = [addr.city, addr.state].filter(Boolean).join(", ") || "";
+  const metaCity = [meta.guest_city, meta.guest_state].filter(Boolean).join(", ");
+  const stripeCity = [addr.city, addr.state].filter(Boolean).join(", ");
+  const guestCity = metaCity || stripeCity || "";
   const amountPaid = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
   const isGroup = bookingType === "group";
   const petDisplay = isGroup ? dogs : pets;
