@@ -3,7 +3,8 @@ const Stripe = require("stripe");
 const HOSPITABLE_BASE = "https://public.api.hospitable.com";
 const PROPERTY_ID = "c947e17d-8779-41bc-a0ff-b15487fcae8f";
 const RESEND_URL = "https://api.resend.com/emails";
-const FROM_ADDRESS = "Alien Dog Campground <onlinesupport@aliendog.com>";
+const FROM_ADDRESS = "Alien Dog Campground <onlinesupport@aliendogcampground.com>";
+const REPLY_TO = "onlinesupport@aliendog.com";
 
 exports.handler = async function (event) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -147,6 +148,7 @@ exports.handler = async function (event) {
         },
         body: JSON.stringify({
           from: FROM_ADDRESS,
+          reply_to: REPLY_TO,
           to: [guestEmail],
           subject: "Your Alien Dog Campground booking is confirmed \uD83D\uDC7D",
           html: guestHtml,
@@ -183,6 +185,7 @@ exports.handler = async function (event) {
       },
       body: JSON.stringify({
         from: FROM_ADDRESS,
+        reply_to: REPLY_TO,
         to: [ownerEmail],
         subject: `New Direct Booking - ${guestName} - ${checkIn} to ${checkOut}`,
         html: ownerHtml,
