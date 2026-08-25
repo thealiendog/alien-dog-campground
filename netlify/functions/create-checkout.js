@@ -62,6 +62,7 @@ function errorResponse(statusCode, message) {
 async function handleHouseBooking(body, stripeKey) {
   const { check_in, check_out } = body;
   const pets = Math.min(Math.max(parseInt(body.pets, 10) || 0, 0), HOUSE_MAX_PETS);
+  const guests = Math.min(Math.max(parseInt(body.guests, 10) || 1, 1), 4);
 
   const priceData = await fetchPrices(check_in, check_out);
   const prices = extractPrices(priceData);
@@ -113,6 +114,7 @@ async function handleHouseBooking(body, stripeKey) {
       cleaning_fee: String(HOUSE_CLEANING_FEE),
       pet_fee: String(petFee),
       pets: String(pets),
+      guests: String(guests),
       tot: String(tot),
     },
     success_url: "https://aliendogcampground.com/booking-success",

@@ -118,7 +118,7 @@ function buildOwnerEmail(data) {
   const {
     guestName, guestEmail, guestPhone, checkIn, checkOut,
     nights, pets, amountPaid, sessionId, calendarSuccess, guestEmailSuccess,
-    bookingType, guests, notes,
+    bookingType, guests, guestCity, notes,
   } = data;
   const typeLabel = bookingType || "House Booking";
   const checkInFmt = fmtDate(checkIn);
@@ -141,13 +141,14 @@ ${outerTableOpen}
         <tr><td bgcolor="${BG2}" style="padding:0 32px;background-color:${BG2};"><div style="height:1px;background:${BORDER};"></div></td></tr>
         <tr><td bgcolor="${BG2}" style="padding:20px 32px;background-color:${BG2};">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${BG2}" style="border:1px solid ${BORDER};border-radius:4px;overflow:hidden;background-color:${BG2};">
-            <tr>${labelCell("Guest")}${valueCell(guestName)}</tr>
+            <tr>${labelCell("Guest Name")}${valueCell(guestName)}</tr>
             <tr>${labelCell("Email")}<td bgcolor="${BG2}" style="padding:10px 12px;font-family:${FONT_B};font-size:14px;text-align:right;border-bottom:1px solid ${BORDER};background-color:${BG2};"><a href="mailto:${guestEmail}" style="color:${NEON};text-decoration:none;">${guestEmail}</a></td></tr>
             <tr>${labelCell("Phone")}${valueCell(guestPhone || "Not provided")}</tr>
+            ${guestCity ? `<tr>${labelCell("From")}${valueCell(guestCity)}</tr>` : ""}
             <tr>${labelCell("Check-in")}${valueCell(checkInFmt)}</tr>
             <tr>${labelCell("Check-out")}${valueCell(checkOutFmt)}</tr>
             <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
-            ${guests ? `<tr>${labelCell("Guests")}${valueCell(guests)}</tr>` : ""}
+            <tr>${labelCell("Guests")}${valueCell(guests || "1")}</tr>
             <tr>${labelCell(typeLabel === "Group Booking" ? "Dogs" : "Pets")}${valueCell(pets)}</tr>
             <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
             ${notes ? `<tr>${labelCell("Notes")}${valueCell(notes)}</tr>` : ""}

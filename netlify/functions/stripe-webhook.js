@@ -54,6 +54,8 @@ exports.handler = async function (event) {
   const guestName = session.customer_details?.name || "Direct Booking Guest";
   const guestEmail = session.customer_details?.email || "";
   const guestPhone = session.customer_details?.phone || "";
+  const addr = session.customer_details?.address || {};
+  const guestCity = [addr.city, addr.state].filter(Boolean).join(", ") || "";
   const amountPaid = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
   const isGroup = bookingType === "group";
   const petDisplay = isGroup ? dogs : pets;
@@ -171,7 +173,8 @@ exports.handler = async function (event) {
     nights, pets: petDisplay, amountPaid, sessionId: session.id,
     calendarSuccess, guestEmailSuccess,
     bookingType: isGroup ? "Group Booking" : "House Booking",
-    guests: isGroup ? guests : null,
+    guests: guests,
+    guestCity: guestCity,
     notes: notes || null,
   });
 
