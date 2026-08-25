@@ -90,7 +90,7 @@ ${outerTableOpen}
           </td></tr></table>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:0 32px 28px;background-color:${BG2};">
-          <p style="margin:0;font-family:${FONT_B};font-size:12px;color:${DIM};">Questions? <a href="mailto:onlinesupport@aliendog.com" style="color:${NEON};text-decoration:none;">onlinesupport@aliendog.com</a></p>
+          <p style="margin:0;font-family:${FONT_B};font-size:12px;color:${DIM};">Questions? <a href="mailto:onlinesupport@thealiendog.com" style="color:${NEON};text-decoration:none;">onlinesupport@thealiendog.com</a></p>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:16px 32px;border-top:1px solid ${BORDER};text-align:center;background-color:${BG2};">
           <p style="margin:0;font-family:${FONT_H};font-size:9px;color:#4a5a44;letter-spacing:2px;text-transform:uppercase;">Alien Dog Campground &middot; Joshua Tree, California</p>
