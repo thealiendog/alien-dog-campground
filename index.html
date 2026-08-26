@@ -268,7 +268,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 #booking-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:960px;width:100%;margin:20px auto;padding:0;}
 #booking-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);width:36px;height:36px;font-size:18px;cursor:pointer;border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 #booking-modal-close:hover{background:rgba(57,255,20,0.1);}
-@media(max-width:900px){#booking-modal-box{margin:10px;}#booking-modal .bm-two-col{grid-template-columns:1fr!important;gap:30px!important;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:repeat(2,1fr)!important;}}
+@media(max-width:900px){#booking-modal-box{margin:10px;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:repeat(2,1fr)!important;}}
 @media(max-width:580px){#booking-modal{padding:10px;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:1fr 1fr!important;}#booking-modal-box .bm-inner{padding:20px 16px!important;}}
 
 #inquiry-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;}
@@ -1866,7 +1866,7 @@ function renderPanelCal(){
 
   for(var i=0;i<first;i++){
     var blank=document.createElement('div');
-    blank.style.cssText='padding:10px;background:rgba(3,0,15,0.3);';
+    blank.style.cssText='padding:18px 10px;background:rgba(3,0,15,0.3);';
     grid.appendChild(blank);
   }
   for(var d=1;d<=days;d++){
@@ -1899,11 +1899,8 @@ function renderPanelCal(){
     var clickable=false;
     if(!isPast){
       if(!_pcCheckin||_pcCheckout){
-        /* Selecting check-in: any available (non-booked, non-past) date */
         if(!booked)clickable=true;
       }else{
-        /* Selecting checkout: after checkin, up to (and including) the next booked start date.
-           Checkout ON a booked date is valid — guest leaves that morning. */
         if(cellDate>_pcCheckin&&(!limitStr||cellStr<=limitStr)){
           clickable=true;
         }
@@ -1912,7 +1909,7 @@ function renderPanelCal(){
 
     if(clickable)cursor='pointer';
 
-    cell.style.cssText='padding:10px;text-align:center;font-family:Orbitron,monospace;font-size:12px;background:'+bg+';border:1px solid '+border+';color:'+color+';cursor:'+cursor+';transition:background 0.2s;';
+    cell.style.cssText='padding:18px 10px;text-align:center;font-family:Orbitron,monospace;font-size:15px;background:'+bg+';border:1px solid '+border+';color:'+color+';cursor:'+cursor+';transition:background 0.2s;';
     cell.textContent=d;
 
     if(clickable){
@@ -1995,84 +1992,87 @@ function renderPanelCal(){
         </div>
       </div>
 
-      <!-- Two-column: Calendar + What's Included -->
-      <div class="bm-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;">
-
-        <!-- Live Availability Calendar -->
-        <div>
-          <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--neon);margin-bottom:18px;">✦ AVAILABILITY</div>
-          <div id="panel-cal" style="background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;overflow:hidden;">
-            <!-- Calendar Header -->
-            <div style="background:rgba(57,255,20,0.06);border-bottom:1px solid rgba(57,255,20,0.15);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;">
-              <div id="panel-cal-month" style="font-family:'Orbitron',monospace;font-size:12px;color:var(--neon);letter-spacing:2px;"></div>
-              <div style="display:flex;gap:8px;">
-                <button onclick="panelCalNav(-1)" style="background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);padding:5px 12px;font-family:'Orbitron',monospace;font-size:10px;cursor:pointer;border-radius:2px;">&#9664;</button>
-                <button onclick="panelCalNav(1)" style="background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);padding:5px 12px;font-family:'Orbitron',monospace;font-size:10px;cursor:pointer;border-radius:2px;">&#9654;</button>
-              </div>
-            </div>
-            <!-- Day headers -->
-            <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid rgba(57,255,20,0.08);">
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">SUN</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">MON</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">TUE</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">WED</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">THU</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">FRI</div>
-              <div style="padding:8px;text-align:center;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;color:var(--tdim);">SAT</div>
-            </div>
-            <!-- Calendar grid -->
-            <div id="panel-cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(57,255,20,0.03);min-height:200px;"></div>
-            <!-- Legend -->
-            <div style="padding:12px 20px;border-top:1px solid rgba(57,255,20,0.08);display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
-              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(57,255,20,0.2);border:1px solid var(--neon);border-radius:2px;display:inline-block;"></span>Available</span>
-              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(255,80,80,0.2);border:1px solid rgba(255,80,80,0.6);border-radius:2px;display:inline-block;"></span>Booked</span>
-              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--tdim);"><span style="width:10px;height:10px;background:rgba(199,125,255,0.3);border:1px solid var(--pbright);border-radius:2px;display:inline-block;"></span>Selected</span>
-            </div>
-          </div>
-          <div id="panel-cal-status" style="font-size:11px;color:var(--tdim);margin-top:10px;font-style:italic;text-align:center;"></div>
-          <!-- Guests & Pets (shown after dates selected) -->
-          <div id="house-extras" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.15);border-radius:4px;padding:16px 20px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
-              <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);">NUMBER OF GUESTS</label>
-              <input type="number" id="house-guests" min="1" max="4" value="2" oninput="if(this.value>4)this.value=4;if(this.value<1&&this.value!=='')this.value=1;" style="width:70px;background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:6px 12px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;border-radius:2px;text-align:center;">
-            </div>
-          </div>
-          <!-- Pet Selection -->
-          <div id="pet-selector" style="display:none;margin-top:8px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.15);border-radius:4px;padding:16px 20px;">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-              <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);cursor:pointer;display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="pet-toggle" onchange="_onPetChange()" style="accent-color:#39ff14;width:16px;height:16px;cursor:pointer;">
-                BRINGING PETS? (+$100/pet)
-              </label>
-              <div id="pet-count-wrap" style="display:none;align-items:center;gap:8px;">
-                <span style="font-size:12px;color:var(--tdim);">How many:</span>
-                <select id="pet-count" onchange="_onPetChange()" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:6px 12px;color:#fff;font-family:'Exo 2',sans-serif;font-size:13px;border-radius:2px;cursor:pointer;">
-                  <option value="1">1 pet</option>
-                  <option value="2">2 pets</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <!-- Booking Summary -->
-          <div id="panel-booking-summary" style="display:none;margin-top:16px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:20px;"></div>
+      <!-- What's Included — compact strip -->
+      <div style="margin-bottom:28px;background:rgba(3,0,15,0.4);border:1px solid rgba(57,255,20,0.1);border-radius:4px;padding:18px 24px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;" onclick="var l=document.getElementById('incl-list');l.style.display=l.style.display==='none'?'block':'none';var a=document.getElementById('incl-arrow');a.textContent=l.style.display==='none'?'\u25B6':'\u25BC';">
+          <span id="incl-arrow" style="font-size:10px;color:var(--neon);">&#9654;</span>
+          <span style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--neon);">WHAT'S INCLUDED</span>
+          <span style="font-size:12px;color:var(--tdim);margin-left:8px;">Sauna &middot; Jacuzzi &middot; Pool &middot; Kitchen &middot; Stargazing &middot; 5 Acres</span>
         </div>
-
-        <!-- What's Included -->
-        <div>
-          <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--neon);margin-bottom:18px;">✦ WHAT'S INCLUDED</div>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:36px;">
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Queen bed + convertible sofa (sleeps up to 4)</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Fully equipped cosmic kitchen</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Dual rain shower with emerald stone tile</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Private jacuzzi with outdoor TV & Netflix</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Cedar sauna + cold plunge + pool</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Telescope for desert stargazing</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Fire pit lounge with mountain views</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> Energy vortex spiral on property</li>
-              <li style="font-size:13px;color:var(--tdim);display:flex;gap:10px;align-items:flex-start;line-height:1.6;"><span style="color:var(--neon);flex-shrink:0;">✦</span> 5 acres of private desert — entirely yours</li>
-            </ul>
+        <div id="incl-list" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;">
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Queen bed + sofa (sleeps 4)</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fully equipped kitchen</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Dual rain shower</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Private jacuzzi + Netflix</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Cedar sauna + cold plunge + pool</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Telescope for stargazing</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fire pit + mountain views</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Energy vortex spiral</div>
+            <div style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;grid-column:1/-1;"><span style="color:var(--neon);">✦</span> 5 acres of private desert — entirely yours</div>
+          </div>
         </div>
+      </div>
 
+      <!-- Full-width Booking Flow -->
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--neon);margin-bottom:18px;">✦ SELECT YOUR DATES</div>
+        <div id="panel-cal" style="background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;overflow:hidden;">
+          <!-- Calendar Header -->
+          <div style="background:rgba(57,255,20,0.06);border-bottom:1px solid rgba(57,255,20,0.15);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+            <div id="panel-cal-month" style="font-family:'Orbitron',monospace;font-size:16px;color:var(--neon);letter-spacing:3px;"></div>
+            <div style="display:flex;gap:10px;">
+              <button onclick="panelCalNav(-1)" style="background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);padding:8px 16px;font-family:'Orbitron',monospace;font-size:12px;cursor:pointer;border-radius:2px;">&#9664;</button>
+              <button onclick="panelCalNav(1)" style="background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);padding:8px 16px;font-family:'Orbitron',monospace;font-size:12px;cursor:pointer;border-radius:2px;">&#9654;</button>
+            </div>
+          </div>
+          <!-- Day headers -->
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid rgba(57,255,20,0.08);">
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">SUN</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">MON</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">TUE</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">WED</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">THU</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">FRI</div>
+            <div style="padding:12px;text-align:center;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--tdim);">SAT</div>
+          </div>
+          <!-- Calendar grid -->
+          <div id="panel-cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:rgba(57,255,20,0.03);"></div>
+          <!-- Legend -->
+          <div style="padding:14px 28px;border-top:1px solid rgba(57,255,20,0.08);display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tdim);"><span style="width:12px;height:12px;background:rgba(57,255,20,0.2);border:1px solid var(--neon);border-radius:2px;display:inline-block;"></span>Available</span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tdim);"><span style="width:12px;height:12px;background:rgba(255,80,80,0.2);border:1px solid rgba(255,80,80,0.6);border-radius:2px;display:inline-block;"></span>Booked</span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--tdim);"><span style="width:12px;height:12px;background:rgba(199,125,255,0.3);border:1px solid var(--pbright);border-radius:2px;display:inline-block;"></span>Selected</span>
+          </div>
+        </div>
+        <div id="panel-cal-status" style="font-size:12px;color:var(--tdim);margin-top:12px;font-style:italic;text-align:center;"></div>
+        <!-- Guests & Pets (shown after dates selected) -->
+        <div id="house-extras" style="display:none;margin-top:20px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.15);border-radius:4px;padding:20px 24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);">GUESTS</label>
+              <input type="number" id="house-guests" min="1" max="4" value="2" oninput="if(this.value>4)this.value=4;if(this.value<1&&this.value!=='')this.value=1;" style="width:60px;background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:8px 12px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;border-radius:2px;text-align:center;">
+            </div>
+          </div>
+        </div>
+        <!-- Pet Selection -->
+        <div id="pet-selector" style="display:none;margin-top:10px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.15);border-radius:4px;padding:20px 24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+            <label style="font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--neon);cursor:pointer;display:flex;align-items:center;gap:10px;">
+              <input type="checkbox" id="pet-toggle" onchange="_onPetChange()" style="accent-color:#39ff14;width:18px;height:18px;cursor:pointer;">
+              BRINGING PETS? (+$100/pet)
+            </label>
+            <div id="pet-count-wrap" style="display:none;align-items:center;gap:8px;">
+              <span style="font-size:13px;color:var(--tdim);">How many:</span>
+              <select id="pet-count" onchange="_onPetChange()" style="background:rgba(6,20,40,0.9);border:1px solid rgba(57,255,20,0.3);padding:8px 14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;border-radius:2px;cursor:pointer;">
+                <option value="1">1 pet</option>
+                <option value="2">2 pets</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <!-- Booking Summary -->
+        <div id="panel-booking-summary" style="display:none;margin-top:20px;background:rgba(3,0,15,0.5);border:1px solid rgba(57,255,20,0.2);border-radius:4px;padding:24px;"></div>
       </div>
     </div>
   </div>
