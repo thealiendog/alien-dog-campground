@@ -1001,7 +1001,7 @@ function _showGqSummary(){
   var coDisp=_gqCheckout.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
   var _r=function(label,amount){
-    return '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:15px;color:var(--tdim);">'+
       '<span>'+label+'</span><span style="color:var(--neon);">$'+amount+'</span></div>';
   };
 
@@ -1041,7 +1041,7 @@ function _showGqSummary(){
       '<div id="gq-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
       '<div id="gq-pay-btn" onclick="_startGroupCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
     '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
+    '<div style="margin-top:10px;font-size:13px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetGqSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
     '</div>';
 
@@ -1683,7 +1683,7 @@ function _showSummary(){
   var coDisp=_pcCheckout.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
   var _r=function(label,amount){
-    return '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;color:var(--tdim);">'+
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:15px;color:var(--tdim);">'+
       '<span>'+label+'</span><span style="color:var(--neon);">$'+amount+'</span></div>';
   };
 
@@ -1725,7 +1725,7 @@ function _showSummary(){
       '<div id="h-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
       '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
     '</div>'+
-    '<div style="margin-top:10px;font-size:10px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
+    '<div style="margin-top:10px;font-size:13px;color:var(--tdim);font-style:italic;">Secure payment via Stripe.</div>'+
     '<div style="margin-top:8px;"><span onclick="_resetSelection()" style="font-size:11px;color:var(--pbright);cursor:pointer;text-decoration:underline;">Clear dates &amp; start over</span></div>'+
     '</div>';
 
@@ -1996,15 +1996,15 @@ function renderPanelCal(){
       <div style="margin-bottom:28px;background:rgba(3,0,15,0.4);border:1px solid rgba(57,255,20,0.1);border-radius:4px;padding:20px 24px;">
         <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--neon);margin-bottom:14px;">✦ WHAT'S INCLUDED</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;">
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Queen bed + sofa (sleeps 4)</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fully equipped kitchen</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Dual rain shower</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Private jacuzzi + Netflix</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Cedar sauna + cold plunge + pool</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Telescope for stargazing</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fire pit + mountain views</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Energy vortex spiral</div>
-          <div style="font-size:14px;color:var(--tdim);display:flex;gap:8px;align-items:center;grid-column:1/-1;"><span style="color:var(--neon);">✦</span> 5 acres of private desert — entirely yours</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Queen bed + sofa (sleeps 4)</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fully equipped kitchen</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Dual rain shower</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Private jacuzzi + Netflix</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Cedar sauna + cold plunge + pool</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Telescope for stargazing</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Fire pit + mountain views</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Energy vortex spiral</div>
+          <div style="font-size:16px;color:var(--tdim);display:flex;gap:8px;align-items:center;grid-column:1/-1;"><span style="color:var(--neon);">✦</span> 5 acres of private desert — entirely yours</div>
         </div>
       </div>
 
