@@ -86,7 +86,7 @@ async function handleHouseBooking(body, stripeKey) {
   let nightCount = 0;
   for (const p of prices) {
     if (p.date >= check_in && p.date < check_out) {
-      nightlyTotal += p.user_price !== undefined ? p.user_price : p.price;
+      nightlyTotal += (p.user_price > 0) ? p.user_price : p.price;
       nightCount++;
     }
   }

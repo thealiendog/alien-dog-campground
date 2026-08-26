@@ -1652,7 +1652,7 @@ function _showSummary(){
   for(var i=0;i<prices.length;i++){
     var p=prices[i];
     if(p.date>=ciStr&&p.date<coStr){
-      var up=p.user_price!==undefined?p.user_price:p.price;
+      var up=(p.user_price>0)?p.user_price:p.price;
       nightlyTotal+=up;
       matchedNights++;
     }
