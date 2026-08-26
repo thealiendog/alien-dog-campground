@@ -61,6 +61,10 @@ exports.handler = async function (event) {
   const amountPaid = session.amount_total ? (session.amount_total / 100).toFixed(2) : "unknown";
   const isGroup = bookingType === "group";
   const petDisplay = isGroup ? dogs : pets;
+  const nightlyTotal = meta.nightly_total || "0";
+  const cleaningFee = meta.cleaning_fee || "0";
+  const petFee = isGroup ? (meta.dog_fee || "0") : (meta.pet_fee || "0");
+  const tot = meta.tot || "0";
 
   console.log("Payment completed:", {
     sessionId: session.id,
@@ -178,6 +182,7 @@ exports.handler = async function (event) {
     guests: guests,
     guestCity: guestCity,
     notes: notes || null,
+    nightlyTotal, cleaningFee, petFee, tot,
   });
 
   let ownerEmailSuccess = false;

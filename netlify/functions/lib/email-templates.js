@@ -119,6 +119,7 @@ function buildOwnerEmail(data) {
     guestName, guestEmail, guestPhone, checkIn, checkOut,
     nights, pets, amountPaid, sessionId, calendarSuccess, guestEmailSuccess,
     bookingType, guests, guestCity, notes,
+    nightlyTotal, cleaningFee, petFee, tot,
   } = data;
   const typeLabel = bookingType || "House Booking";
   const checkInFmt = fmtDate(checkIn);
@@ -150,8 +151,17 @@ ${outerTableOpen}
             <tr>${labelCell("Nights")}${valueCell(nights)}</tr>
             <tr>${labelCell("Guests")}${valueCell(guests || "1")}</tr>
             <tr>${labelCell(typeLabel === "Group Booking" ? "Dogs" : "Pets")}${valueCell(pets)}</tr>
-            <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
             ${notes ? `<tr>${labelCell("Notes")}${valueCell(notes)}</tr>` : ""}
+          </table>
+        </td></tr>
+        <tr><td bgcolor="${BG2}" style="padding:0 32px 20px;background-color:${BG2};">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="${BG2}" style="border:1px solid ${BORDER};border-radius:4px;overflow:hidden;background-color:${BG2};">
+            <tr><td colspan="2" bgcolor="${BG2}" style="padding:10px 12px;font-family:${FONT_H};font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${PURPLE};background-color:${BG2};border-bottom:1px solid ${BORDER};">Price Breakdown</td></tr>
+            <tr>${labelCell(nights + " nights" + (nightlyTotal && nights ? " \u00d7 $" + Math.round(nightlyTotal / nights) + "/night" : ""))}${valueCell("$" + nightlyTotal)}</tr>
+            <tr>${labelCell("Cleaning fee")}${valueCell("$" + cleaningFee)}</tr>
+            ${parseInt(petFee, 10) > 0 ? `<tr>${labelCell((typeLabel === "Group Booking" ? "Dog" : "Pet") + " fee (" + pets + " \u00d7 $" + Math.round(petFee / Math.max(parseInt(pets,10),1)) + ")")}${valueCell("$" + petFee)}</tr>` : ""}
+            <tr>${labelCell("Occupancy Tax (7%)")}${valueCell("$" + tot)}</tr>
+            <tr>${labelCell("Total Paid")}${valueCell("$" + amountPaid, true)}</tr>
           </table>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:0 32px 20px;background-color:${BG2};">
