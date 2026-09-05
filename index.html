@@ -1292,6 +1292,7 @@ function renderEventsCal(){
 }
 </script><script>
 /* === 3D SPIRAL GALAXY BACKGROUND === */
+window.addEventListener('load',function(){
 (function(){
   var container=document.getElementById('galaxy-bg');
   var fallbackCanvas=document.getElementById('stars-canvas');
@@ -1440,6 +1441,7 @@ function renderEventsCal(){
   }
   animate();
 })();
+});
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting) e.target.classList.add('on');
 }),{threshold:0.01, rootMargin:'0px 0px -50px 0px'});
