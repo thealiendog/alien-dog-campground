@@ -18,9 +18,9 @@ exports.handler = async function (event) {
 
     const stripe = new Stripe(stripeKey);
 
-    /* Look up promotion codes with coupon expanded inline */
+    /* Look up promotion codes with nested coupon expanded inline */
     const promos = await stripe.promotionCodes.list({
-      code, active: true, limit: 1, expand: ["data.coupon"],
+      code, active: true, limit: 1, expand: ["data.promotion.coupon"],
     });
 
     if (!promos.data || promos.data.length === 0) {
@@ -32,7 +32,7 @@ exports.handler = async function (event) {
     }
 
     const promo = promos.data[0];
-    const coupon = promo.coupon;
+    const coupon = promo.promotion?.coupon || promo.coupon;
 
     /* Log full promo object for debugging */
     console.log("Raw promo object:", JSON.stringify(promo, null, 2));
@@ -52,10 +52,10 @@ exports.handler = async function (event) {
       result.amount_off = coupon.amount_off / 100;
     }
 
-    /* Debug: log what we found */
+    /* Debug: log what we resolved */
     console.log("Promo validated:", {
       code: promo.code, promo_id: promo.id,
-      coupon_type: typeof promo.coupon,
+      coupon_path: promo.promotion?.coupon ? "promotion.coupon" : (promo.coupon ? "coupon" : "none"),
       coupon_id: coupon?.id,
       percent_off: coupon?.percent_off,
       amount_off: coupon?.amount_off,
