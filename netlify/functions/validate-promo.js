@@ -18,8 +18,10 @@ exports.handler = async function (event) {
 
     const stripe = new Stripe(stripeKey);
 
-    /* Look up promotion codes matching this code string */
-    const promos = await stripe.promotionCodes.list({ code, active: true, limit: 1 });
+    /* Look up promotion codes with coupon expanded inline */
+    const promos = await stripe.promotionCodes.list({
+      code, active: true, limit: 1, expand: ["data.coupon"],
+    });
 
     if (!promos.data || promos.data.length === 0) {
       return {
@@ -30,17 +32,10 @@ exports.handler = async function (event) {
     }
 
     const promo = promos.data[0];
+    const coupon = promo.coupon;
 
-    /* Expand the coupon if it came back as just an ID string */
-    /* Expand the coupon — may be an object or a string ID */
-    let coupon = promo.coupon;
-    if (!coupon || typeof coupon === "string") {
-      try {
-        coupon = await stripe.coupons.retrieve(typeof coupon === "string" ? coupon : promo.id);
-      } catch (e) {
-        coupon = null;
-      }
-    }
+    /* Log full promo object for debugging */
+    console.log("Raw promo object:", JSON.stringify(promo, null, 2));
 
     const result = {
       valid: true,
