@@ -1296,16 +1296,21 @@ function renderEventsCal(){
   var ctx=c.getContext('2d');
   var W,H,cx,cy;
   var reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  var COUNT=2200;
-  var BASE_SPEED=reducedMotion?0.01:0.15;
+  var isMobile=window.innerWidth<768;
+  var COUNT=isMobile?350:2200;
+  var BASE_SPEED=reducedMotion?0.02:(isMobile?0.35:0.25);
   var MAX_DEPTH=1000;
   var mouseSpeed=0;
   var stars=[];
+  var resizeTimer=null;
 
   function resize(){
     W=c.width=window.innerWidth;
     H=c.height=window.innerHeight;
     cx=W/2;cy=H/2;
+    /* Fill black immediately to prevent flash */
+    ctx.fillStyle='#03000f';
+    ctx.fillRect(0,0,W,H);
   }
 
   function initStars(){
@@ -1321,10 +1326,19 @@ function renderEventsCal(){
   }
 
   document.addEventListener('mousemove',function(e){
-    if(reducedMotion)return;
+    if(reducedMotion||isMobile)return;
     var dx=e.clientX-cx;
     var distFromCenter=1-Math.min(Math.abs(dx)/cx,1);
     mouseSpeed=distFromCenter*0.4;
+  });
+
+  /* Only resize on actual resize/orientation, not mobile scroll bar changes */
+  window.addEventListener('resize',function(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){resize();initStars();},200);
+  });
+  window.addEventListener('orientationchange',function(){
+    setTimeout(function(){resize();initStars();},300);
   });
 
   function draw(){
@@ -1383,7 +1397,6 @@ function renderEventsCal(){
     s.psy=cy+(s.y/s.z)*cy;
   }
   draw();
-  window.addEventListener('resize',function(){resize();initStars();});
 })();
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting) e.target.classList.add('on');
