@@ -101,8 +101,9 @@ async function handleHouseBooking(body, stripeKey) {
   const grandTotal = Math.round((taxableBase + tot) * 100) / 100;
   const amountCents = Math.round(grandTotal * 100);
 
+  const promoId = (body.promo_id || "").substring(0, 200);
   const stripe = new Stripe(stripeKey);
-  const session = await stripe.checkout.sessions.create({
+  const sessionParams = {
     mode: "payment",
     customer_email: guest.email || undefined,
     line_items: [
@@ -132,10 +133,13 @@ async function handleHouseBooking(body, stripeKey) {
       guest_phone: guest.phone,
       guest_city: guest.city,
       guest_state: guest.state,
+      promo_code: promoId || "none",
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",
-  });
+  };
+  if (promoId) sessionParams.discounts = [{ promotion_code: promoId }];
+  const session = await stripe.checkout.sessions.create(sessionParams);
 
   return {
     statusCode: 200,
@@ -163,8 +167,9 @@ async function handleGroupBooking(body, stripeKey) {
   const grandTotal = Math.round((taxableBase + tot) * 100) / 100;
   const amountCents = Math.round(grandTotal * 100);
 
+  const promoId = (body.promo_id || "").substring(0, 200);
   const stripe = new Stripe(stripeKey);
-  const session = await stripe.checkout.sessions.create({
+  const sessionParams = {
     mode: "payment",
     customer_email: guest.email || undefined,
     line_items: [
@@ -195,10 +200,13 @@ async function handleGroupBooking(body, stripeKey) {
       guest_phone: guest.phone,
       guest_city: guest.city,
       guest_state: guest.state,
+      promo_code: promoId || "none",
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",
-  });
+  };
+  if (promoId) sessionParams.discounts = [{ promotion_code: promoId }];
+  const session = await stripe.checkout.sessions.create(sessionParams);
 
   return {
     statusCode: 200,
