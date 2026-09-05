@@ -32,12 +32,16 @@ exports.handler = async function (event) {
     const promo = promos.data[0];
 
     /* Expand the coupon if it came back as just an ID string */
+    /* Expand the coupon — may be an object or a string ID */
     let coupon = promo.coupon;
-    if (typeof coupon === "string") {
-      coupon = await stripe.coupons.retrieve(coupon);
+    if (!coupon || typeof coupon === "string") {
+      try {
+        coupon = await stripe.coupons.retrieve(typeof coupon === "string" ? coupon : promo.id);
+      } catch (e) {
+        coupon = null;
+      }
     }
 
-    /* If coupon couldn't be resolved, still allow — Stripe will validate at checkout */
     const result = {
       valid: true,
       promo_id: promo.id,
@@ -45,13 +49,23 @@ exports.handler = async function (event) {
       name: (coupon && coupon.name) || promo.code,
     };
 
-    if (coupon && coupon.percent_off) {
+    if (coupon && coupon.percent_off != null && coupon.percent_off > 0) {
       result.type = "percent";
       result.percent_off = coupon.percent_off;
-    } else if (coupon && coupon.amount_off) {
+    } else if (coupon && coupon.amount_off != null && coupon.amount_off > 0) {
       result.type = "amount";
-      result.amount_off = coupon.amount_off / 100; /* Convert from cents */
+      result.amount_off = coupon.amount_off / 100;
     }
+
+    /* Debug: log what we found */
+    console.log("Promo validated:", {
+      code: promo.code, promo_id: promo.id,
+      coupon_type: typeof promo.coupon,
+      coupon_id: coupon?.id,
+      percent_off: coupon?.percent_off,
+      amount_off: coupon?.amount_off,
+      result_type: result.type,
+    });
 
     return {
       statusCode: 200,
