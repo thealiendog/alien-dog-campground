@@ -268,13 +268,13 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 #booking-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:960px;width:100%;margin:20px auto;padding:0;}
 #booking-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);width:36px;height:36px;font-size:18px;cursor:pointer;border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 #booking-modal-close:hover{background:rgba(57,255,20,0.1);}
-@media(max-width:900px){#booking-modal-box{margin:10px;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:repeat(2,1fr)!important;}}
+@media(max-width:900px){#booking-modal-box,#inquiry-modal-box,#events-modal-box{margin:10px;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:repeat(2,1fr)!important;}}
 @media(max-width:580px){#booking-modal{padding:10px;}#booking-modal .bm-photo-grid,#inquiry-modal .bm-photo-grid,#events-modal .bm-photo-grid{grid-template-columns:1fr 1fr!important;}#booking-modal-box .bm-inner{padding:20px 16px!important;}}
 
 #inquiry-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;}
 #inquiry-modal.open{display:flex;}
 #inquiry-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,0,15,0.92);backdrop-filter:blur(8px);z-index:0;}
-#inquiry-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:800px;width:100%;margin:20px auto;padding:0;}
+#inquiry-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:960px;width:100%;margin:20px auto;padding:0;}
 #inquiry-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);width:36px;height:36px;font-size:18px;cursor:pointer;border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 #inquiry-modal-close:hover{background:rgba(57,255,20,0.1);}
 @media(max-width:580px){#inquiry-modal{padding:10px;}#inquiry-modal-box .im-inner{padding:20px 16px!important;}#inquiry-modal .inquiry-form{grid-template-columns:1fr!important;}#events-modal{padding:10px;}#events-modal-box .em-inner{padding:20px 16px!important;}#events-modal .events-form{grid-template-columns:1fr!important;}}
@@ -282,7 +282,7 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
 #events-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;align-items:flex-start;justify-content:center;padding:30px 20px;overflow-y:auto;}
 #events-modal.open{display:flex;}
 #events-modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(3,0,15,0.92);backdrop-filter:blur(8px);z-index:0;}
-#events-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:800px;width:100%;margin:20px auto;padding:0;}
+#events-modal-box{position:relative;z-index:1;background:var(--bg2);border:1px solid rgba(57,255,20,0.25);border-radius:4px;max-width:960px;width:100%;margin:20px auto;padding:0;}
 #events-modal-close{position:absolute;top:16px;right:16px;background:transparent;border:1px solid rgba(57,255,20,0.3);color:var(--neon);width:36px;height:36px;font-size:18px;cursor:pointer;border-radius:2px;z-index:2;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
 #events-modal-close:hover{background:rgba(57,255,20,0.1);}
 
@@ -2376,7 +2376,7 @@ function renderPanelCal(){
         <div style="font-family:'Orbitron',monospace;font-size:11px;letter-spacing:3px;color:var(--neon);margin-bottom:6px;">✦ TELL US ABOUT YOUR EVENT</div>
         <p style="font-size:12px;color:var(--tdim);font-style:italic;">Event pricing is custom — we'll follow up within 24 hours with a tailored quote.</p>
       </div>
-      <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:800px;margin:0 auto;" class="events-form">
+      <form action="https://formspree.io/f/mjgaepaq" method="POST" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:0 auto;" class="events-form">
         <input type="hidden" name="_subject" value="New Event Inquiry - Alien Dog Campground">
         <div style="display:flex;flex-direction:column;gap:8px;">
           <label style="font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);">YOUR NAME</label>
