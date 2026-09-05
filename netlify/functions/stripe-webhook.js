@@ -209,10 +209,50 @@ exports.handler = async function (event) {
     console.error("Owner email error:", err.message);
   }
 
+  /* --- SMS notification via Twilio --- */
+  let smsSuccess = false;
+  const twilioSid = process.env.TWILIO_ACCOUNT_SID;
+  const twilioAuth = process.env.TWILIO_AUTH_TOKEN;
+  const twilioFrom = process.env.TWILIO_FROM_NUMBER;
+  const twilioTo = process.env.TWILIO_TO_NUMBER;
+
+  if (twilioSid && twilioAuth && twilioFrom && twilioTo) {
+    try {
+      const typeLabel = isGroup ? "Group" : "House";
+      const smsBody = `New ${typeLabel} Booking: ${guestName}, ${checkIn}\u2192${checkOut}, ${guests} guests, ${petDisplay} ${isGroup ? "dogs" : "pets"}, $${amountPaid}. Add to Hospitable.`;
+
+      const smsParams = new URLSearchParams();
+      smsParams.append("To", twilioTo);
+      smsParams.append("From", twilioFrom);
+      smsParams.append("Body", smsBody);
+
+      const smsRes = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Basic " + Buffer.from(`${twilioSid}:${twilioAuth}`).toString("base64"),
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: smsParams.toString(),
+        }
+      );
+      const smsData = await smsRes.text();
+      console.log("Twilio SMS response:", smsRes.status, smsData);
+      smsSuccess = smsRes.ok || smsRes.status === 201;
+      if (!smsSuccess) console.error("SMS failed:", smsRes.status, smsData);
+    } catch (err) {
+      console.error("SMS error:", err.message);
+    }
+  } else {
+    console.log("Twilio not configured — skipping SMS");
+  }
+
   console.log("Webhook complete:", {
     calendarBlocked: calendarSuccess,
     guestEmailSent: guestEmailSuccess,
     ownerEmailSent: ownerEmailSuccess,
+    smsSent: smsSuccess,
   });
 
   return { statusCode: 200, body: "Processed" };
