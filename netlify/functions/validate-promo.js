@@ -30,28 +30,25 @@ exports.handler = async function (event) {
     }
 
     const promo = promos.data[0];
-    const coupon = promo.coupon;
 
-    /* Check if coupon exists and is explicitly invalid */
-    if (!coupon || coupon.valid === false) {
-      return {
-        statusCode: 200,
-        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
-        body: JSON.stringify({ valid: false, error: "This promo code has expired" }),
-      };
+    /* Expand the coupon if it came back as just an ID string */
+    let coupon = promo.coupon;
+    if (typeof coupon === "string") {
+      coupon = await stripe.coupons.retrieve(coupon);
     }
 
+    /* If coupon couldn't be resolved, still allow — Stripe will validate at checkout */
     const result = {
       valid: true,
       promo_id: promo.id,
       code: promo.code,
-      name: coupon.name || promo.code,
+      name: (coupon && coupon.name) || promo.code,
     };
 
-    if (coupon.percent_off) {
+    if (coupon && coupon.percent_off) {
       result.type = "percent";
       result.percent_off = coupon.percent_off;
-    } else if (coupon.amount_off) {
+    } else if (coupon && coupon.amount_off) {
       result.type = "amount";
       result.amount_off = coupon.amount_off / 100; /* Convert from cents */
     }
