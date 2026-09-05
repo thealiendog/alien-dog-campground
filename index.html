@@ -235,26 +235,6 @@ footer{background:var(--bg);border-top:1px solid rgba(57,255,20,0.18);padding:56
   #nav-toggle-label { display:flex; }
 }
 
-#coming-soon-modal {
-  display:none;
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,0.85);
-  z-index:99999;
-  align-items:center;
-  justify-content:center;
-}
-#coming-soon-modal.show { display:flex; }
-.modal-box {
-  background:#06001e;
-  border:1px solid rgba(57,255,20,0.4);
-  padding:50px 40px;
-  max-width:460px;
-  width:90%;
-  text-align:center;
-  position:relative;
-  border-radius:4px;
-}
 .modal-box::before {
   content:'';
   position:absolute;
@@ -1499,9 +1479,6 @@ function closeMenu(){
   document.getElementById('mobileMenu').style.display='none';
 }
 
-function closeModal(){
-  document.getElementById('coming-soon-modal').classList.remove('show');
-}
 checkMobile();
 window.addEventListener('resize', checkMobile);
 
@@ -1620,7 +1597,7 @@ function _fetchPrices(){
     })
     .catch(function(){
       var status=document.getElementById('panel-cal-status');
-      if(status)status.textContent='Could not fetch pricing — try again or book on Airbnb.';
+      if(status)status.textContent='Could not fetch pricing — please try again.';
     });
 }
 
@@ -1649,7 +1626,7 @@ function _showSummary(){
   }
 
   if(!prices||!Array.isArray(prices)||prices.length===0){
-    if(status)status.textContent='Pricing unavailable for these dates — book on Airbnb.';
+    if(status)status.textContent='Pricing unavailable for these dates. Please try different dates.';
     summary.style.display='none';
     _recalcPanel();
     return;
@@ -2006,15 +1983,6 @@ function renderPanelCal(){
 }
 </script>
 
-<div id="coming-soon-modal">
-  <div class="modal-box">
-    <div style="font-size:48px;margin-bottom:16px;">🛸</div>
-    <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--neon);letter-spacing:2px;margin-bottom:14px;">COMING SOON!</div>
-    <p style="font-size:15px;color:var(--tdim);line-height:1.8;margin-bottom:28px;">Direct booking via Stripe is launching soon.<br>In the meantime, <strong style="color:var(--neon);">book on Airbnb</strong> to reserve your dates.</p>
-    <a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener" style="display:block;background:var(--neon);padding:14px 32px;font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:2px;color:#03000f;cursor:pointer;border-radius:2px;width:100%;margin-bottom:12px;text-decoration:none;box-sizing:border-box;text-align:center;">BOOK ON AIRBNB 🛸</a>
-    <div onclick="document.getElementById('coming-soon-modal').classList.remove('show')" style="font-size:13px;color:var(--tdim);cursor:pointer;padding:8px;">Close</div>
-  </div>
-</div>
 
 <div id="booking-modal">
   <div id="booking-modal-overlay" onclick="closeBookingModal()"></div>
