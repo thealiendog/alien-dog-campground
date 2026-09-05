@@ -32,8 +32,8 @@ exports.handler = async function (event) {
     const promo = promos.data[0];
     const coupon = promo.coupon;
 
-    /* Check if coupon is still valid */
-    if (!coupon || !coupon.valid) {
+    /* Check if coupon exists and is explicitly invalid */
+    if (!coupon || coupon.valid === false) {
       return {
         statusCode: 200,
         headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
