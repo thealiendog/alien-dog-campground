@@ -299,6 +299,133 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
 </head>
 <body>
 <canvas id="stars-canvas"></canvas>
+<script>
+/* === WARP-SPEED STARFIELD (site-wide) === */
+(function(){
+  var c=document.getElementById('stars-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W,H,cx,cy;
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var isMobile=window.innerWidth<768;
+  var COUNT=isMobile?1000:2200;
+  var BASE_SPEED=reducedMotion?0.02:(isMobile?1.2:0.25);
+  var MAX_DEPTH=1000;
+  var mouseSpeed=0;
+  var stars=[];
+  var resizeTimer=null;
+
+  function resize(){
+    var vw=window.innerWidth;
+    var vh=window.innerHeight;
+    c.width=vw*dpr;
+    c.height=vh*dpr;
+    c.style.width=vw+'px';
+    c.style.height=vh+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    W=vw;H=vh;
+    cx=W/2;cy=H/2;
+    /* Fill black immediately to prevent flash */
+    ctx.fillStyle='#03000f';
+    ctx.fillRect(0,0,W,H);
+  }
+
+  function initStars(){
+    stars=[];
+    for(var i=0;i<COUNT;i++){
+      stars.push({
+        x:(Math.random()-0.5)*W*2,
+        y:(Math.random()-0.5)*H*2,
+        z:Math.random()*MAX_DEPTH,
+        psx:0,psy:0
+      });
+    }
+  }
+
+  document.addEventListener('mousemove',function(e){
+    if(reducedMotion||isMobile)return;
+    var dx=e.clientX-cx;
+    var distFromCenter=1-Math.min(Math.abs(dx)/cx,1);
+    mouseSpeed=distFromCenter*0.4;
+  });
+
+  /* Only resize on actual resize/orientation, not mobile scroll bar changes */
+  window.addEventListener('resize',function(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){resize();initStars();},200);
+  });
+  window.addEventListener('orientationchange',function(){
+    setTimeout(function(){resize();initStars();},300);
+  });
+
+  function draw(){
+    /* Semi-transparent fill for subtle trails */
+    ctx.fillStyle='rgba(3,0,15,0.35)';
+    ctx.fillRect(0,0,W,H);
+
+    var speed=BASE_SPEED+mouseSpeed;
+
+    for(var i=0;i<COUNT;i++){
+      var s=stars[i];
+
+      /* Project to screen */
+      var sx=cx+(s.x/s.z)*cx;
+      var sy=cy+(s.y/s.z)*cy;
+
+      /* Move star toward viewer */
+      s.z-=speed*4;
+
+      /* Reset if too close or off-screen */
+      if(s.z<1||sx<-20||sx>W+20||sy<-20||sy>H+20){
+        s.x=(Math.random()-0.5)*W*2;
+        s.y=(Math.random()-0.5)*H*2;
+        s.z=MAX_DEPTH;
+        s.psx=cx+(s.x/s.z)*cx;
+        s.psy=cy+(s.y/s.z)*cy;
+        continue;
+      }
+
+      /* Brightness and size increase as star approaches */
+      var t=1-s.z/MAX_DEPTH;
+      var alpha=t*0.8+0.1;
+
+      if(isMobile){
+        /* Mobile: render as dots to avoid white-out from long streaks */
+        var r=t*1.8+0.3;
+        ctx.beginPath();
+        ctx.arc(sx,sy,r,0,6.28);
+        ctx.fillStyle='rgba(255,255,255,'+alpha+')';
+        ctx.fill();
+      }else{
+        /* Desktop: render as streaking lines */
+        var lw=t*2+0.3;
+        ctx.beginPath();
+        ctx.moveTo(s.psx,s.psy);
+        ctx.lineTo(sx,sy);
+        ctx.strokeStyle='rgba(255,255,255,'+alpha+')';
+        ctx.lineWidth=lw;
+        ctx.stroke();
+      }
+
+      s.psx=sx;
+      s.psy=sy;
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  initStars();
+  /* Initialize previous screen positions */
+  for(var i=0;i<stars.length;i++){
+    var s=stars[i];
+    s.psx=cx+(s.x/s.z)*cx;
+    s.psy=cy+(s.y/s.z)*cy;
+  }
+  draw();
+})();
+</script>
 
 <input type="checkbox" id="nav-toggle">
 <nav>
@@ -1289,131 +1416,7 @@ function renderEventsCal(){
   }
 }
 </script><script>
-/* === WARP-SPEED STARFIELD (site-wide) === */
-(function(){
-  var c=document.getElementById('stars-canvas');
-  if(!c)return;
-  var ctx=c.getContext('2d');
-  var W,H,cx,cy;
-  var dpr=Math.min(window.devicePixelRatio||1,2);
-  var reducedMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  var isMobile=window.innerWidth<768;
-  var COUNT=isMobile?1000:2200;
-  var BASE_SPEED=reducedMotion?0.02:(isMobile?1.2:0.25);
-  var MAX_DEPTH=1000;
-  var mouseSpeed=0;
-  var stars=[];
-  var resizeTimer=null;
 
-  function resize(){
-    var vw=window.innerWidth;
-    var vh=window.innerHeight;
-    c.width=vw*dpr;
-    c.height=vh*dpr;
-    c.style.width=vw+'px';
-    c.style.height=vh+'px';
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    W=vw;H=vh;
-    cx=W/2;cy=H/2;
-    /* Fill black immediately to prevent flash */
-    ctx.fillStyle='#03000f';
-    ctx.fillRect(0,0,W,H);
-  }
-
-  function initStars(){
-    stars=[];
-    for(var i=0;i<COUNT;i++){
-      stars.push({
-        x:(Math.random()-0.5)*W*2,
-        y:(Math.random()-0.5)*H*2,
-        z:Math.random()*MAX_DEPTH,
-        psx:0,psy:0
-      });
-    }
-  }
-
-  document.addEventListener('mousemove',function(e){
-    if(reducedMotion||isMobile)return;
-    var dx=e.clientX-cx;
-    var distFromCenter=1-Math.min(Math.abs(dx)/cx,1);
-    mouseSpeed=distFromCenter*0.4;
-  });
-
-  /* Only resize on actual resize/orientation, not mobile scroll bar changes */
-  window.addEventListener('resize',function(){
-    clearTimeout(resizeTimer);
-    resizeTimer=setTimeout(function(){resize();initStars();},200);
-  });
-  window.addEventListener('orientationchange',function(){
-    setTimeout(function(){resize();initStars();},300);
-  });
-
-  function draw(){
-    /* Semi-transparent fill for subtle trails */
-    ctx.fillStyle='rgba(3,0,15,0.35)';
-    ctx.fillRect(0,0,W,H);
-
-    var speed=BASE_SPEED+mouseSpeed;
-
-    for(var i=0;i<COUNT;i++){
-      var s=stars[i];
-
-      /* Project to screen */
-      var sx=cx+(s.x/s.z)*cx;
-      var sy=cy+(s.y/s.z)*cy;
-
-      /* Move star toward viewer */
-      s.z-=speed*4;
-
-      /* Reset if too close or off-screen */
-      if(s.z<1||sx<-20||sx>W+20||sy<-20||sy>H+20){
-        s.x=(Math.random()-0.5)*W*2;
-        s.y=(Math.random()-0.5)*H*2;
-        s.z=MAX_DEPTH;
-        s.psx=cx+(s.x/s.z)*cx;
-        s.psy=cy+(s.y/s.z)*cy;
-        continue;
-      }
-
-      /* Brightness and size increase as star approaches */
-      var t=1-s.z/MAX_DEPTH;
-      var alpha=t*0.8+0.1;
-
-      if(isMobile){
-        /* Mobile: render as dots to avoid white-out from long streaks */
-        var r=t*1.8+0.3;
-        ctx.beginPath();
-        ctx.arc(sx,sy,r,0,6.28);
-        ctx.fillStyle='rgba(255,255,255,'+alpha+')';
-        ctx.fill();
-      }else{
-        /* Desktop: render as streaking lines */
-        var lw=t*2+0.3;
-        ctx.beginPath();
-        ctx.moveTo(s.psx,s.psy);
-        ctx.lineTo(sx,sy);
-        ctx.strokeStyle='rgba(255,255,255,'+alpha+')';
-        ctx.lineWidth=lw;
-        ctx.stroke();
-      }
-
-      s.psx=sx;
-      s.psy=sy;
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  resize();
-  initStars();
-  /* Initialize previous screen positions */
-  for(var i=0;i<stars.length;i++){
-    var s=stars[i];
-    s.psx=cx+(s.x/s.z)*cx;
-    s.psy=cy+(s.y/s.z)*cy;
-  }
-  draw();
-})();
 const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
   if(e.isIntersecting) e.target.classList.add('on');
 }),{threshold:0.01, rootMargin:'0px 0px -50px 0px'});
