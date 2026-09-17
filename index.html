@@ -295,6 +295,8 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
 #gal-lb-prev{left:16px;}
 #gal-lb-next{right:16px;}
 #gal-lb-counter{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-family:'Orbitron',monospace;font-size:11px;color:var(--tdim);letter-spacing:2px;}
+
+@media(max-width:580px){#reviews .reveal>[style*="grid-template-columns"]{grid-template-columns:1fr!important;}#reviews [style*="grid-column:1/-1"]{grid-column:auto!important;}}
 </style>
 </head>
 <body>
@@ -809,6 +811,88 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
   </div>
 </section>
 <!-- ========== GALLERY SECTION END ========== -->
+
+<!-- ========== GUEST REVIEWS SECTION ========== -->
+<section id="reviews" style="background:rgba(6,0,30,0.55);padding:90px 40px;position:relative;z-index:1;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="reveal" style="text-align:center;margin-bottom:50px;">
+      <span class="sec-label">✦ Guest Reviews</span>
+      <h2 class="sec-title">What Our Guests <em>Are Saying</em></h2>
+      <div class="divider c"></div>
+      <p class="sec-body" style="margin:0 auto;">Real reviews from real guests. Every stay rated 5 stars.</p>
+    </div>
+    <div class="reveal" style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;">
+
+      <!-- Daxton -->
+      <div style="background:rgba(6,20,40,0.7);border:1px solid rgba(57,255,20,0.12);border-radius:6px;padding:28px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(57,255,20,0.3)'" onmouseout="this.style.borderColor='rgba(57,255,20,0.12)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#39ff14,#c77dff);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#03000f;flex-shrink:0;">D</div>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Daxton</div>
+            <div style="font-size:11px;color:var(--tdim);">Los Angeles, California</div>
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:#ffd60a;letter-spacing:2px;">★★★★★</div>
+        </div>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.8;margin:0;">"My wife and I are proud to be the first people to stay in this amazing home! I was blown away by the thought and details that went into the home. The sauna was our favorite part after soaking in the spa. The house has the most amazing bathroom I have ever seen in my life! It is a step away from the chaos of life and the perfect place to disconnect. I highly recommend this place to anyone looking for that kind of escape."</p>
+      </div>
+
+      <!-- Monica -->
+      <div style="background:rgba(6,20,40,0.7);border:1px solid rgba(57,255,20,0.12);border-radius:6px;padding:28px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(57,255,20,0.3)'" onmouseout="this.style.borderColor='rgba(57,255,20,0.12)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#c77dff,#39ff14);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#03000f;flex-shrink:0;">M</div>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Monica</div>
+            <div style="font-size:11px;color:var(--tdim);">Apple Valley, California</div>
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:#ffd60a;letter-spacing:2px;">★★★★★</div>
+        </div>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.8;margin:0;">"Such a breath taking property! Brought my husband here for his Birthday weekend and it was the most amazing experience! He loves Space and Astronomy and this right here is a constellation lovers place! Everything from the Spa areas to the showers! The Kitchen was fully loaded for all our meals we felt right at home! Our Host Chris was amazing and super attentive! Definitely coming back!"</p>
+      </div>
+
+      <!-- Ralph -->
+      <div style="background:rgba(6,20,40,0.7);border:1px solid rgba(57,255,20,0.12);border-radius:6px;padding:28px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(57,255,20,0.3)'" onmouseout="this.style.borderColor='rgba(57,255,20,0.12)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#39ff14,#9b5de5);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#03000f;flex-shrink:0;">R</div>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Ralph</div>
+            <div style="font-size:11px;color:var(--tdim);">Colton, California</div>
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:#ffd60a;letter-spacing:2px;">★★★★★</div>
+        </div>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.8;margin:0;">"We had an amazing stay at this Joshua Tree Airbnb! The house had such a unique outer-space theme that made the whole place feel really special and fun. The pool and jacuzzi were perfect for relaxing, especially at night. One of our favorite parts was being able to stargaze at night. Being out in Joshua Tree with such a beautiful view of the night sky made the experience even better. We would definitely come back!"</p>
+      </div>
+
+      <!-- Angie -->
+      <div style="background:rgba(6,20,40,0.7);border:1px solid rgba(57,255,20,0.12);border-radius:6px;padding:28px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(57,255,20,0.3)'" onmouseout="this.style.borderColor='rgba(57,255,20,0.12)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#c77dff,#39ff14);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#03000f;flex-shrink:0;">A</div>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Angie</div>
+            <div style="font-size:11px;color:var(--tdim);">Ventura, California</div>
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:#ffd60a;letter-spacing:2px;">★★★★★</div>
+        </div>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.8;margin:0;">"Me and my partner loved the property! Tons to do, the cold plunge was definitely a plus! Chris was attentive and friendly, I plan on booking again!"</p>
+      </div>
+
+      <!-- Corey — spans full width -->
+      <div style="grid-column:1/-1;background:rgba(6,20,40,0.7);border:1px solid rgba(57,255,20,0.12);border-radius:6px;padding:28px;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(57,255,20,0.3)'" onmouseout="this.style.borderColor='rgba(57,255,20,0.12)'">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#9b5de5,#39ff14);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:#03000f;flex-shrink:0;">C</div>
+          <div>
+            <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:1px;">Corey</div>
+            <div style="font-size:11px;color:var(--tdim);">Simi Valley, California</div>
+          </div>
+          <div style="margin-left:auto;font-size:13px;color:#ffd60a;letter-spacing:2px;">★★★★★</div>
+        </div>
+        <p style="font-size:14px;color:var(--tdim);line-height:1.8;margin:0;">"Super cool place with an awesome theme down to every last detail. They did an amazing job with the place and it's a fun stay!"</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- ========== GUEST REVIEWS SECTION END ========== -->
+
 
 
 
