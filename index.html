@@ -147,7 +147,11 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
 .footer-socials{display:flex;gap:14px;}
 .footer-socials a{font-size:11px;font-family:'Orbitron',monospace;color:var(--tdim);text-decoration:none;letter-spacing:2px;transition:color 0.3s;}
 .footer-socials a:hover{color:var(--neon);}
-.booking-cards>div{display:flex;flex-direction:column;}.booking-cards>div>ul{flex:1;}.booking-cards>div>.btn-p{margin-top:auto;}
+.booking-cards>div{display:flex;flex-direction:column;}
+.booking-cards>div>ul{flex:1;}
+.booking-cards .card-cta{margin-top:auto;width:100%;text-align:center;}
+.booking-cards .card-cta .btn-p{display:block;width:100%;box-sizing:border-box;padding:15px 20px;font-size:12px;}
+.booking-cards .card-cta .btn-p svg{display:none;}
 @media(max-width:900px){nav ul{display:flex;gap:12px;}.amen-grid,.dogs-grid{grid-template-columns:repeat(2,1fr);}.exp-grid,.story-grid,.loc-grid{grid-template-columns:1fr;gap:40px;}.footer-grid{grid-template-columns:1fr 1fr;}.ig-grid{grid-template-columns:repeat(3,1fr);}.booking-cards{grid-template-columns:1fr!important;}}
 @media(max-width:580px){.sec{padding:60px 20px;}nav{padding:12px 20px;}.hero-btns{flex-direction:column;align-items:center;}.dogs-grid,.amen-grid,.footer-grid{grid-template-columns:1fr;}}
 
@@ -614,8 +618,10 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Sauna · Jacuzzi · Cold Plunge · Pool</li>
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--neon);">✦</span> Real-time availability calendar</li>
         </ul>
-        <a href="#" onclick="openBookingModal();return false;" class="btn-p" style="display:block;text-align:center;">Check Availability 🛸</a>
-        <div style="margin-top:12px;text-align:center;"><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener" style="font-size:11px;color:var(--tdim);text-decoration:none;letter-spacing:1px;transition:color 0.2s;">Prefer Airbnb? Book there instead &rarr;</a></div>
+        <div class="card-cta">
+          <a href="#" onclick="openBookingModal();return false;" class="btn-p">Check Availability 🛸</a>
+          <div style="margin-top:12px;"><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener" style="font-size:11px;color:var(--tdim);text-decoration:none;letter-spacing:1px;transition:color 0.2s;">Prefer Airbnb? Book there instead &rarr;</a></div>
+        </div>
       </div>
 
       <!-- GROUP BOOKING -->
@@ -632,7 +638,10 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--pbright);">✦</span> Ideal for family reunions & group trips</li>
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:var(--pbright);">✦</span> $1,000/night flat rate · 2 night minimum</li>
         </ul>
-        <a href="#" onclick="openInquiryModal('Group Booking');return false;" class="btn-p" style="display:block;text-align:center;background:var(--pbright);box-shadow:0 0 28px rgba(155,93,229,0.4);">Book Group Stay <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="6" r="2"/><circle cx="16" cy="6" r="2"/><circle cx="12" cy="5" r="2"/><path d="M2 20c0-4 2.5-6 6-6h8c3.5 0 6 2 6 6"/></svg></a>
+        <div class="card-cta">
+          <a href="#" onclick="openInquiryModal('Group Booking');return false;" class="btn-p" style="background:var(--pbright);box-shadow:0 0 28px rgba(155,93,229,0.4);">Book Group Stay</a>
+          <div style="margin-top:12px;font-size:11px;color:transparent;letter-spacing:1px;">&nbsp;</div>
+        </div>
       </div>
 
       <!-- EVENTS -->
@@ -648,7 +657,10 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:#ffd60a;">✦</span> Movies under the stars</li>
           <li style="font-size:13px;color:var(--tdim);display:flex;gap:8px;align-items:center;"><span style="color:#ffd60a;">✦</span> Ceremonies & celebrations</li>
         </ul>
-        <a href="#" onclick="openEventsModal();return false;" class="btn-p" style="display:block;text-align:center;background:#ffd60a;color:#03000f;box-shadow:0 0 28px rgba(255,214,10,0.3);">Plan Your Event <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></a>
+        <div class="card-cta">
+          <a href="#" onclick="openEventsModal();return false;" class="btn-p" style="background:#ffd60a;color:#03000f;box-shadow:0 0 28px rgba(255,214,10,0.3);">Plan Your Event</a>
+          <div style="margin-top:12px;font-size:11px;color:transparent;letter-spacing:1px;">&nbsp;</div>
+        </div>
       </div>
 
     </div>
