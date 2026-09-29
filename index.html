@@ -1097,6 +1097,51 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
 </section>
 <!-- ========== BUILD JOURNEY SECTION END ========== -->
 
+<!-- ========== BOARDING LIST START ========== -->
+<section id="boarding-list" style="padding:80px 24px;text-align:center;background:var(--bg);">
+  <div style="max-width:560px;margin:0 auto;">
+    <span class="sec-label">THE BOARDING LIST</span>
+    <h2 class="sec-title">Get <em>first access</em></h2>
+    <p class="sec-body" style="margin:0 auto 28px;">Open dates, sky events and stories from the build, before we post them anywhere else. No spam. Leave any time.</p>
+    <form id="bl-form" onsubmit="return _joinBoardingList(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <input type="text" name="website" id="bl-website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0;">
+      <input type="email" id="bl-email" placeholder="Your email" required aria-label="Email address" style="flex:1 1 240px;min-width:0;background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:14px;color:#fff;font-family:'Exo 2',sans-serif;font-size:14px;outline:none;border-radius:2px;">
+      <button type="submit" id="bl-btn" style="background:var(--neon);color:var(--bg);padding:14px 28px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border:none;border-radius:2px;cursor:pointer;">JOIN THE BOARDING LIST</button>
+    </form>
+    <div id="bl-msg" role="status" style="margin-top:14px;font-size:13px;color:var(--tdim);min-height:20px;"></div>
+  </div>
+</section>
+<script>
+function _joinBoardingList(e){
+  e.preventDefault();
+  var email=document.getElementById('bl-email').value.trim();
+  var btn=document.getElementById('bl-btn');
+  var msg=document.getElementById('bl-msg');
+  if(!email)return false;
+  btn.disabled=true;btn.style.opacity='0.5';
+  msg.style.color='var(--tdim)';msg.textContent='Joining...';
+  fetch('/.netlify/functions/join-boarding-list',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,website:document.getElementById('bl-website').value})
+  }).then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
+  .then(function(x){
+    if(x.ok){
+      msg.style.color='var(--neon)';msg.textContent="You're on the Boarding List.";
+      document.getElementById('bl-form').style.display='none';
+    }else{
+      msg.style.color='#ff5050';msg.textContent=(x.d&&x.d.error)||'Could not join. Please try again.';
+      btn.disabled=false;btn.style.opacity='1';
+    }
+  }).catch(function(){
+    msg.style.color='#ff5050';msg.textContent='Network error. Please try again.';
+    btn.disabled=false;btn.style.opacity='1';
+  });
+  return false;
+}
+</script>
+<!-- ========== BOARDING LIST END ========== -->
+
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
@@ -1106,7 +1151,7 @@ footer{background:rgba(3,0,15,0.6);border-top:1px solid rgba(57,255,20,0.18);pad
     <div class="footer-col"><h4>Explore</h4><ul><li><a href="#amenities">The Experience</a></li><li><a href="#dogs">The Alien Dogs</a></li><li><a href="#story">Our Story</a></li><li><a href="#location">Location</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#build-journey">The Build</a></li></ul></div>
-    <div class="footer-col"><h4>Stay</h4><ul><li><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener">Book on Airbnb</a></li><li><a href="#book">Book Direct</a></li><li><a href="#groups">Group Booking</a></li><li><a href="#" onclick="openEventsModal();return false;">Private Events</a></li></ul></div>
+    <div class="footer-col"><h4>Stay</h4><ul><li><a href="https://www.airbnb.com/rooms/1696678609363938046" target="_blank" rel="noopener">Book on Airbnb</a></li><li><a href="#book">Book Direct</a></li><li><a href="#boarding-list">Boarding List</a></li><li><a href="#groups">Group Booking</a></li><li><a href="#" onclick="openEventsModal();return false;">Private Events</a></li></ul></div>
     <div class="footer-col"><h4>Connect</h4><ul><li><a href="https://instagram.com/aliendogcampground" target="_blank">Instagram</a></li><li><a href="https://facebook.com/TheAlienDog" target="_blank">Facebook</a></li><li><a href="/cdn-cgi/l/email-protection#036c6d6f6a6d66707673736c717743776b66626f6a666d676c642d606c6e">Email Us</a></li></ul></div>
   </div>
   <div class="footer-bottom">
