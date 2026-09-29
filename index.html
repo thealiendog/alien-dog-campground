@@ -2061,7 +2061,7 @@ function _termsHtml(prefix){
   return '<div style="margin-top:14px;padding:12px 14px;border:1px solid rgba(57,255,20,0.25);border-radius:2px;text-align:left;">'+
     '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;line-height:1.6;color:var(--tdim);">'+
       '<input type="checkbox" id="'+prefix+'-terms" style="margin-top:3px;accent-color:#39ff14;flex:none;">'+
-      '<span>I have read and agree to the <a href="/terms" target="_blank" rel="noopener" style="color:var(--pbright);">Rental Agreement, Waiver and Cancellation Policy</a>. '+
+      '<span>I have read and agree to the <a href="'+(prefix==='gq'?'/terms#group':'/terms#house')+'" target="_blank" rel="noopener" style="color:var(--pbright);">Rental Agreement, Waiver and Cancellation Policy</a>. '+
       'Full refund 14 or more days before check-in. 50% of nights refunded 7 to 14 days before. No refund of nights within 7 days.</span>'+
     '</label></div>';
 }
