@@ -93,7 +93,7 @@ ${outerTableOpen}
           <p style="margin:0;font-family:${FONT_B};font-size:12px;color:${DIM};">Questions? <a href="mailto:onlinesupport@thealiendog.com" style="color:${NEON};text-decoration:none;">onlinesupport@thealiendog.com</a></p>
         </td></tr>
         <tr><td bgcolor="${BG2}" style="padding:16px 32px;border-top:1px solid ${BORDER};text-align:center;background-color:${BG2};">
-          <p style="margin:0;font-family:${FONT_H};font-size:9px;color:#4a5a44;letter-spacing:2px;text-transform:uppercase;">Alien Dog Campground &middot; Operated by Evolved Acquisitions LLC &middot; Joshua Tree, California</p>
+          <p style="margin:0;font-family:${FONT_H};font-size:9px;color:#4a5a44;letter-spacing:2px;text-transform:uppercase;">Alien Dog Campground &middot; Joshua Tree, California</p>
         </td></tr>
       </table>
 ${outerTableClose}
