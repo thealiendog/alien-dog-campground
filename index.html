@@ -1285,6 +1285,7 @@ function _showGqSummary(){
         '<input type="text" id="gq-city" placeholder="City" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
         '<input type="text" id="gq-state" placeholder="State" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
       '</div>'+
+      _termsHtml('gq')+
       '<div id="gq-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
       '<div id="gq-pay-btn" onclick="_startGroupCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
     '</div>'+
@@ -1353,6 +1354,8 @@ function _startGroupCheckout(){
       guest_phone:info.guest_phone,
       guest_city:info.guest_city,
       guest_state:info.guest_state,
+      accepted_terms:true,
+      terms_version:TERMS_VERSION,
       promo_id:window._groupPromo&&window._groupPromo.valid?window._groupPromo.promo_id:''
     })
   })
@@ -1961,6 +1964,7 @@ function _showSummary(){
         '<input type="text" id="h-city" placeholder="City" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
         '<input type="text" id="h-state" placeholder="State" required style="background:rgba(255,255,255,0.04);border:1px solid rgba(57,255,20,0.3);padding:12px 14px;color:#fff;font-family:Exo 2,sans-serif;font-size:13px;outline:none;border-radius:2px;">'+
       '</div>'+
+      _termsHtml('h')+
       '<div id="h-form-error" style="display:none;color:#ff5050;font-size:12px;text-align:center;margin-top:8px;"></div>'+
       '<div id="pay-btn" onclick="_startCheckout()" style="display:block;text-align:center;background:var(--neon);color:var(--bg);padding:14px 32px;font-family:Orbitron,monospace;font-size:12px;font-weight:700;letter-spacing:3px;border-radius:2px;cursor:pointer;box-shadow:0 0 20px rgba(57,255,20,0.4);transition:all 0.3s;margin-top:14px;">PROCEED TO PAYMENT \u2192</div>'+
     '</div>'+
@@ -2046,6 +2050,15 @@ function _showGuestForm(){
   if(r)r.style.display='none';
 }
 
+var TERMS_VERSION='2026-09-29';
+function _termsHtml(prefix){
+  return '<div style="margin-top:14px;padding:12px 14px;border:1px solid rgba(57,255,20,0.25);border-radius:2px;text-align:left;">'+
+    '<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:12px;line-height:1.6;color:var(--tdim);">'+
+      '<input type="checkbox" id="'+prefix+'-terms" style="margin-top:3px;accent-color:#39ff14;flex:none;">'+
+      '<span>I have read and agree to the <a href="/terms" target="_blank" rel="noopener" style="color:var(--pbright);">Rental Agreement, Waiver and Cancellation Policy</a>. '+
+      'Full refund 14 or more days before check-in. 50% of nights refunded 7 to 14 days before. No refund of nights within 7 days.</span>'+
+    '</label></div>';
+}
 function _validateForm(prefix){
   var name=document.getElementById(prefix+'-fname');
   var email=document.getElementById(prefix+'-email');
@@ -2059,6 +2072,11 @@ function _validateForm(prefix){
   }
   if(!email.value.includes('@')){
     if(err){err.textContent='Please enter a valid email address.';err.style.display='block';}
+    return null;
+  }
+  var terms=document.getElementById(prefix+'-terms');
+  if(!terms||!terms.checked){
+    if(err){err.textContent='Please accept the rental agreement, waiver and cancellation policy to continue.';err.style.display='block';}
     return null;
   }
   if(err)err.style.display='none';
@@ -2080,7 +2098,7 @@ function _startCheckout(){
   fetch('/.netlify/functions/create-checkout',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({check_in:ciStr,check_out:coStr,pets:_getPetCount(),guests:_getHouseGuests(),guest_name:info.guest_name,guest_email:info.guest_email,guest_phone:info.guest_phone,guest_city:info.guest_city,guest_state:info.guest_state,promo_id:window._housePromo&&window._housePromo.valid?window._housePromo.promo_id:''})
+    body:JSON.stringify({check_in:ciStr,check_out:coStr,pets:_getPetCount(),guests:_getHouseGuests(),guest_name:info.guest_name,guest_email:info.guest_email,guest_phone:info.guest_phone,guest_city:info.guest_city,guest_state:info.guest_state,accepted_terms:true,terms_version:TERMS_VERSION,promo_id:window._housePromo&&window._housePromo.valid?window._housePromo.promo_id:''})
   })
   .then(function(r){return r.json();})
   .then(function(data){

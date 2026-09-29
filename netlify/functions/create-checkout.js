@@ -134,6 +134,8 @@ async function handleHouseBooking(body, stripeKey) {
       guest_city: guest.city,
       guest_state: guest.state,
       promo_code: promoId || "none",
+      terms_accepted_at: new Date().toISOString(),
+      terms_version: String(body.terms_version || "").substring(0, 40),
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",
@@ -201,6 +203,8 @@ async function handleGroupBooking(body, stripeKey) {
       guest_city: guest.city,
       guest_state: guest.state,
       promo_code: promoId || "none",
+      terms_accepted_at: new Date().toISOString(),
+      terms_version: String(body.terms_version || "").substring(0, 40),
     },
     success_url: "https://aliendogcampground.com/booking-success",
     cancel_url: "https://aliendogcampground.com/",
@@ -228,6 +232,10 @@ exports.handler = async function (event) {
     }
     if (check_in >= check_out) {
       return errorResponse(400, "check_out must be after check_in");
+    }
+
+    if (body.accepted_terms !== true) {
+      return errorResponse(400, "Please accept the rental agreement, waiver and cancellation policy");
     }
 
     if (booking_type === "group") {
